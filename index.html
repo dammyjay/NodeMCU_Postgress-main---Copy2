@@ -291,7 +291,7 @@
         function exportToExcel() {
             const table = document.getElementById('dataTable');
             const wb = XLSX.utils.table_to_book(table, { sheet: "Data" });
-            XLSX.writeFile(wb, 'TemperatureData.xlsx');
+            XLSX.writeFile(wb, 'EMGData.xlsx');
         }
 
         function exportToPDF() {
@@ -304,7 +304,7 @@
                 const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
         
                 pdf.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
-                pdf.save('TemperatureData.pdf');
+                pdf.save('EMGData.pdf');
             });
         }
 
