@@ -3,17 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Updates with Graph</title>
+    <title>Emg Dashboard</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <link rel="icon" href="https://drive.google.com/uc?export=view&id=1EDwL2W6-6DanrTd__7quA6OUJveaqcmx" type="image/x-icon">
+    <link rel="icon" href="Images/calicare logo.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            /* background-color: #f0f4f8; */
+            background-image: url(Images/Background.png);
+            background-size: auto;
+            background-repeat: no-repeat;
+            /* color: #333; */
+            margin: 0;
+            padding: 20px;
+        }
+        .header{
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
         .btn {
             padding: 10px 20px;
             border: none;
@@ -66,12 +81,17 @@
             display: block;
             margin-bottom: 10px;
         }
+        label{
+            padding: 5px 0px;
+        }
 
     </style>
 </head>
 <body>
-    <img src="https://drive.google.com/uc?export=view&id=1EDwL2W6-6DanrTd__7quA6OUJveaqcmx" alt="Site Logo" id="logo">
-    <h1>EMG Live Data Table & Sensor Graph</h1>
+    <div class="header">
+        <img style="width: 40px; height: 40px;" src="calicare logo.png" alt="Site Logo" id="logo">
+        <h1>EMG Live Data Table & Sensor Graph</h1>
+    </div>
     <div style="margin-top: 20px;">
         <button class="btn btn-dark-green" onclick="exportToExcel()">Export to Excel</button>
         <button class="btn btn-light-green" onclick="exportToPDF()">Export to PDF</button>
@@ -97,14 +117,18 @@
         <button class="btn btn-dark-green" onclick="resetFilter()">Reset</button>
     </div> -->
     
-    <div style="margin-top: 20px;">
+   <div style="margin-top: 20px;">
         <label for="startDate">Start Date:</label>
         <input type="date" id="startDate">
+        <br><br>
+        <label for="endDate">Start Time:</label>
         <input type="time" id="startTime">
         <br><br> <!-- This adds spacing and line break -->
     
         <label for="endDate">End Date:</label>
         <input type="date" id="endDate">
+        <br><br>
+        <label for="endDate">End Time:</label>
         <input type="time" id="endTime">
         <br><br> <!-- This adds spacing and line break -->
     
