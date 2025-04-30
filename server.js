@@ -1,12 +1,25 @@
 const WebSocket = require("ws");
 const express = require("express");
 const path = require("path");
+const session = require("express-session");
+const nodemailer = require("nodemailer");
 const { Pool } = require("pg");
 require('dotenv').config(); // Load .env variables
 
 const connectionString = process.env.DATABASE_URL;
 
 const app = express();
+app.use(session({
+    name: 'sid',
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: false,           // set to true when you have HTTPS
+      maxAge: 2 * 60 * 60 * 1000
+    }
+}));
 const server = require("http").createServer(app);
 const wss = new WebSocket.Server({ server });
 
@@ -19,6 +32,15 @@ const wss = new WebSocket.Server({ server });
 
 
 // const { Pool } = require('pg');
+console.log('🔗 Connecting to Postgres with:', {
+    host:   process.env.DB_HOST,
+    port:   process.env.DB_PORT,
+    database: process.env.DB_NAME,
+    user:   process.env.DB_USER,
+    databaseurl: process.env.DATABASE_URL,
+  });
+
+
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL ,
@@ -27,6 +49,23 @@ const pool = new Pool({
   },
 
 });
+
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: { user: process.env.EMAIL, pass: process.env.EMAIL_PASS },
+});
+
+// const nodemailer = require("nodemailer");
+
+// const transporter = nodemailer.createTransport({
+//   service: "gmail",
+//   auth: {
+//     user: process.env.SMTP_EMAIL,
+//     pass: process.env.SMTP_PASS
+//   }
+// });
+
+app.use(express.json());
 
 // Middleware to parse form data
 app.use(express.urlencoded({ extended: true }));
@@ -39,20 +78,101 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 });
 
+app.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+    const result = await pool.query("SELECT * FROM users WHERE email = $1 AND password = $2", [email, password]);
+  
+    if (result.rows.length === 0) return res.send("Invalid credentials");
+  
+    req.session.user = result.rows[0];
+    res.redirect("/dashboard");
+  });
+
 // Route for signup page
 app.get('/signup', (req, res) => {
     res.sendFile(path.join(__dirname, 'signup.html'));
 });
 
 // After login success, show dashboard
-app.get('/dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
+// app.get('/dashboard', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'index.html'));
+// });
+
+app.get("/dashboard", (req, res) => {
+    if (!req.session.user) return res.redirect("/login.html");
+    res.sendFile(path.join(__dirname, "index.html"));
+  });
 
 // (Optional) Redirect root URL to login
 app.get('/', (req, res) => {
     res.redirect('/login');
 });
+
+app.get("/getUserData", async (req, res) => {
+    const { device_ip } = req.query;
+    const userId = req.session.user.id;
+    const data = await pool.query("SELECT * FROM nodemcu_data WHERE user_id = $1 AND device_ip = $2", [userId, device_ip]);
+    res.json(data.rows);
+  });
+
+//   app.post('/signup', async (req, res) => {
+//     console.log('>>> req.body =', req.body);
+//     // …
+//   });  
+
+//   app.post('/signup', (req, res) => {
+//     const { username, password } = req.body;
+//     // 🔥 Here you would normally save to your database
+//     res.send('Signup successful! <a href="/login">Login now</a>');
+// });
+
+
+app.post("/signup", async (req, res) => {
+    console.log('Inserted into pending_users (or nodemcu_table) for:', /* email or temperature, humidity */);
+    // console.log('>>> SIGNUP BODY:', req.body);
+    console.log('>>> req.body =', req.body);
+    const { email, username, phone, gender, password } = req.body;
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  
+    await pool.query(`
+      INSERT INTO pending_users (email, username, phone, gender, password, otp)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      ON CONFLICT (email) DO UPDATE SET otp = $6, created_at = CURRENT_TIMESTAMP
+    `, [email, username, phone, gender, password, otp]);
+
+    // await pool.query(
+    //     `INSERT INTO pending_users
+    //       (email, username, phone, gender, password, otp)
+    //      VALUES
+    //       ($1,     $2,       $3,    $4,     $5,       $6)`,
+    //     [email, username, phone, gender, password, otp]
+    //   );
+  
+    await transporter.sendMail({
+      to: email,
+      subject: "Your OTP Code",
+      text: `Your OTP is: ${otp}`,
+    });
+  
+    res.sendStatus(200);
+  });
+  
+
+app.post("/verify-otp", async (req, res) => {
+    const { email, otp } = req.body;
+    const result = await pool.query("SELECT * FROM pending_users WHERE email = $1 AND otp = $2", [email, otp]);
+  
+    if (result.rows.length === 0) return res.send("Invalid OTP");
+  
+    const user = result.rows[0];
+    await pool.query("INSERT INTO users (email, username, phone, gender, password) VALUES ($1, $2, $3, $4, $5)", 
+      [user.email, user.username, user.phone, user.gender, user.password]);
+  
+    await pool.query("DELETE FROM pending_users WHERE email = $1", [email]);
+  
+    res.send("Verification successful. You can now login.");
+  });
+  
 
 //------------------------------------------------
 // Signup
@@ -88,22 +208,18 @@ app.get('/', (req, res) => {
   
 //-------------------------------------------------------
 
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    // 🔥 Here you would normally check in your database
 
-    if (username === 'admin' && password === '1234') {
-        res.redirect('/dashboard'); // login success
-    } else {
-        res.send('Invalid credentials! <a href="/login">Try again</a>');
-    }
-});
+// app.post('/login', (req, res) => {-------
+// app.post('/login', (req, res) => {
+//     const { username, password } = req.body;
+//     // 🔥 Here you would normally check in your database
 
-app.post('/signup', (req, res) => {
-    const { username, password } = req.body;
-    // 🔥 Here you would normally save to your database
-    res.send('Signup successful! <a href="/login">Login now</a>');
-});
+//     if (username === 'admin' && password === '1234') {
+//         res.redirect('/dashboard'); // login success
+//     } else {
+//         res.send('Invalid credentials! <a href="/login">Try again</a>');
+//     }
+// });
 
 
 // Ensure table exists
@@ -145,6 +261,8 @@ wss.on("connection", (ws) => {
 // Insert data into PostgreSQL
 app.post("/postData", express.urlencoded({ extended: true }), async (req, res) => {
     console.log("Received data:", req.body);
+    console.log('Inserted into pending_users (or nodemcu_table) for:', /* email or temperature, humidity */);
+
     const { temperature, humidity } = req.body;
     const date = new Date().toISOString().split("T")[0];
     const time = new Date().toISOString().split("T")[1].split(".")[0];
