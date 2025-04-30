@@ -84,6 +84,11 @@
         label{
             padding: 5px 0px;
         }
+        .btn-below {
+            display: inline-flex;
+            justify-content: center;
+            gap: 10px;
+        }
 
     </style>
 </head>
@@ -92,10 +97,7 @@
         <img style="width: 40px; height: 40px;" src="calicare logo.png" alt="Site Logo" id="logo">
         <h1>EMG Live Data Table & Sensor Graph</h1>
     </div>
-    <div style="margin-top: 20px;">
-        <button class="btn btn-dark-green" onclick="exportToExcel()">Export to Excel</button>
-        <button class="btn btn-light-green" onclick="exportToPDF()">Export to PDF</button>
-    </div>
+
 
 
     <div id="chart"></div>
@@ -131,9 +133,15 @@
         <label for="endDate">End Time:</label>
         <input type="time" id="endTime">
         <br><br> <!-- This adds spacing and line break -->
-    
-        <button class="btn btn-light-green" onclick="applyDateFilter()">Filter</button>
-        <button class="btn btn-dark-green" onclick="resetFilter()">Reset</button>
+        <div class="btn-below">
+            <button class="btn btn-light-green" onclick="applyDateFilter()">Filter</button>
+            <button class="btn btn-dark-green" onclick="resetFilter()">Reset</button>
+        </div>
+        
+    </div>
+    <div class="btn-below" style="margin-top: 20px;">
+        <button class="btn btn-dark-green" onclick="exportToExcel()">Export to Excel</button>
+        <button class="btn btn-light-green" onclick="exportToPDF()">Export to PDF</button>
     </div>
     
 
