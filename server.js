@@ -2,7 +2,7 @@ const WebSocket = require("ws");
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
-const PgSession = require('connect-pg-simple')(session);
+const PgSession = require("connect-pg-simple")(session);
 const nodemailer = require("nodemailer");
 const { Pool } = require("pg");
 require('dotenv').config(); // Load .env variables
@@ -22,6 +22,13 @@ const app = express();
 //     }
 // }));
 
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL ,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  
+  });
 app.use(session({
     store: new PgSession({
       pool: pool,                // your pg `Pool` instance
@@ -59,13 +66,6 @@ console.log('🔗 Connecting to Postgres with:', {
 
 
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL ,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-
-});
 
 const transporter = nodemailer.createTransport({
   service: "Gmail",
