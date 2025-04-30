@@ -87,8 +87,9 @@ app.get('/signup', (req, res) => {
 
 
 app.get("/dashboard", (req, res) => {
-    if (!req.session.user) return res.redirect("/login.html");
+    // if (!req.session.user) return res.redirect("/login.html");
     res.sendFile(path.join(__dirname, "index.html"));
+    // res.render("dashboard", { user: req.session.user });
   });
 
 // (Optional) Redirect root URL to login
