@@ -2,6 +2,7 @@ const WebSocket = require("ws");
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
+const PgSession = require('connect-pg-simple')(session);
 const nodemailer = require("nodemailer");
 const { Pool } = require("pg");
 require('dotenv').config(); // Load .env variables
@@ -9,17 +10,33 @@ require('dotenv').config(); // Load .env variables
 const connectionString = process.env.DATABASE_URL;
 
 const app = express();
+// app.use(session({
+//     name: 'sid',
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//       httpOnly: true,
+//       secure: false,           // set to true when you have HTTPS
+//       maxAge: 2 * 60 * 60 * 1000
+//     }
+// }));
+
 app.use(session({
-    name: 'sid',
+    store: new PgSession({
+      pool: pool,                // your pg `Pool` instance
+      tableName: 'session',      // you can name this whatever you like
+      createTableIfMissing: true // auto-create the table on startup
+    }),
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      httpOnly: true,
-      secure: false,           // set to true when you have HTTPS
-      maxAge: 2 * 60 * 60 * 1000
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 2 * 60 * 60 * 1000 // 2 hours
     }
-}));
+  }));
+
 const server = require("http").createServer(app);
 const wss = new WebSocket.Server({ server });
 
