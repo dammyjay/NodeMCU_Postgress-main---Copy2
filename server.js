@@ -21,15 +21,11 @@ const wss = new WebSocket.Server({ server });
 // const { Pool } = require('pg');
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://user123:QiAizBnRp8bzphS2FaPikFmkSRFdmrIE@dpg-d04kqkc9c44c739oc66g-a.oregon-postgres.render.com/mydb_tph6',
+  connectionString: process.env.DATABASE_URL ,
   ssl: {
     rejectUnauthorized: false,
   },
-  user: 'user123',
-  host: 'localhost',
-  database: 'mydb_tph6',
-  password: 'QiAizBnRp8bzphS2FaPikFmkSRFdmrIE',
-  port: 5432, // default PostgreSQL port
+
 });
 
 // Middleware to parse form data
