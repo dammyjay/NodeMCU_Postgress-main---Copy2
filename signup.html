@@ -83,6 +83,47 @@
       margin: 0 auto 20px; /* centers horizontally and adds bottom space */
       max-width: 40px; /* or adjust to suit your layout */
     }
+
+    /* #otp-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.6); 
+      z-index: 9999;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    } */
+
+    /* #otp-modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+    } */
+
+    /* #otp-modal input, #otp-modal button {
+      margin: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      width: 80%;  
+    } */
+
+    /* #otp-modal button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    #otp-modal button:hover {
+      background-color: #218838;
+    } */
+
     </style>
   </head>
   <body>
@@ -90,10 +131,7 @@
       <img src="calicare logo.png" alt="Logo" class="logo">
       <h2>Sign Up</h2>
       <form id="signup-form" action="/signup" method="post">
-        <!-- <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Sign Up</button> -->
-
+        <!-- Form fields here -->
         <input type="email" name="email" required placeholder="Email" />
         <input type="text" name="username" required placeholder="Username" />
         <input type="number" name="phone" required placeholder="Phone" />
@@ -101,53 +139,34 @@
           <option>Male</option>
           <option>Female</option>
         </select>
-        <!-- <input name="password" type="password" required placeholder="Password" /> -->
-               <div class="password-container">
-        <input
-          id="password"
-          type="password"
-          name="password"
-          placeholder="Password"
-          required
-        />
-        <span id="togglePassword" class="toggle-password">
-          <i class="fa fa-eye"></i>
-        </span>
-      </div>
+        <div class="password-container">
+          <input
+            id="password"
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+          />
+          <span id="togglePassword" class="toggle-password">
+            <i class="fa fa-eye"></i>
+          </span>
+        </div>
         <button type="submit">Sign Up</button>
       </form>
       <p>Already have an account? <a href="/login">Login</a></p>
-
-      <div id="otp-modal" style="display:none">
-        <input id="otp-input" placeholder="Enter OTP" />
-        <button onclick="verifyOtp()">Verify OTP</button>
+    
+      <!-- OTP Modal -->
+      <div id="otp-modal" style="display: none;">
+        <div style="background: #fff; padding: 20px; border-radius: 8px; text-align: center;">
+          <input id="otp-input" placeholder="Enter OTP" />
+          <button onclick="verifyOtp()">Verify OTP</button>
+        </div>
       </div>
+
     </div>
 
-    <!-- <script>
-      document.getElementById("signup-form").onsubmit = async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const res = await fetch("/signup", { method: "POST", body: formData });
-        if (res.ok) {
-          document.getElementById("otp-modal").style.display = "block";
-        } else {
-          alert("Signup failed");
-        }
-      };
-
-      async function verifyOtp() {
-        const otp = document.getElementById("otp-input").value;
-        const email = document.querySelector("input[name='email']").value;
-        const res = await fetch("/verify-otp", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, otp }),
-        });
-        alert(await res.text());
-      }
-    </script> -->
-
+    
+    
 
     <script>
       document.getElementById("signup-form").onsubmit = async (e) => {
