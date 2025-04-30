@@ -23,7 +23,7 @@
       font-family: Arial, sans-serif;
     }
     .form-container {
-      background: #fff;
+      background: #adecd3;
       padding: 30px 40px;
       border-radius: 8px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -76,10 +76,17 @@
     a:hover {
       text-decoration: underline;
     }
+    .logo {
+      display: block;
+      margin: 0 auto 20px; /* centers horizontally and adds bottom space */
+      max-width: 40px; /* or adjust to suit your layout */
+    }
+
   </style>
 </head>
 <body>
   <div class="form-container">
+    <img src="calicare logo.png" alt="Logo" class="logo">
     <h2>Login</h2>
     <form action="/login" method="post">
       <input type="text" name="email" placeholder="Username" required>
