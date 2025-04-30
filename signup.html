@@ -33,7 +33,7 @@
       text-align: center;
       color: #333;
     }
-    input[type="text"], input[type="password"] {
+      input[type="text"], input[type="password"], [type="email"], [type="number"] {
       width: 100%;
       padding: 10px;
       margin: 10px 0 20px;
@@ -49,6 +49,7 @@
       border-radius: 5px;
       font-weight: bold;
       cursor: pointer;
+        margin: 10px 0 20px;
     }
     button:hover {
       background: #218838;
@@ -69,13 +70,86 @@
 <body>
   <div class="form-container">
     <h2>Sign Up</h2>
-    <form action="/signup" method="post">
-    <input type="text" name="username" placeholder="Username" required>
+      <form id="signup-form" action="/signup" method="post">
+        <!-- <input type="text" name="username" placeholder="Username" required>
     <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Sign Up</button> -->
+
+        <input type="email" name="email" required placeholder="Email" />
+        <input type="text" name="username" required placeholder="Username" />
+        <input type="number" name="phone" required placeholder="Phone" />
+        <select name="gender" required>
+          <option>Male</option>
+          <option>Female</option>
+        </select>
+        <input name="password" type="password" required placeholder="Password" />
     <button type="submit">Sign Up</button>
     </form>
     <p>Already have an account? <a href="/login">Login</a></p>
 
+      <div id="otp-modal" style="display:none">
+        <input id="otp-input" placeholder="Enter OTP" />
+        <button onclick="verifyOtp()">Verify OTP</button>
+      </div>
   </div>
+
+    <!-- <script>
+      document.getElementById("signup-form").onsubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const res = await fetch("/signup", { method: "POST", body: formData });
+        if (res.ok) {
+          document.getElementById("otp-modal").style.display = "block";
+        } else {
+          alert("Signup failed");
+        }
+      };
+
+      async function verifyOtp() {
+        const otp = document.getElementById("otp-input").value;
+        const email = document.querySelector("input[name='email']").value;
+        const res = await fetch("/verify-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, otp }),
+        });
+        alert(await res.text());
+      }
+    </script> -->
+
+
+    <script>
+      document.getElementById("signup-form").onsubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const payload = Object.fromEntries(formData.entries());
+    
+        const res = await fetch("/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+    
+        if (res.ok) {
+          document.getElementById("otp-modal").style.display = "block";
+        } else {
+          alert("Signup failed: " + await res.text());
+        }
+      };
+
+      async function verifyOtp() {
+        const otp = document.getElementById("otp-input").value;
+        const email = document.querySelector("input[name='email']").value;
+        const res = await fetch("/verify-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, otp }),
+        });
+        alert(await res.text());
+      }
+    </script>
+    
+
+    
 </body>
 </html>
