@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <title>Login</title>
+    <title>Signup</title>
     <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
@@ -190,17 +190,39 @@
         }
       };
 
+      // async function verifyOtp() {
+      //   const otp = document.getElementById("otp-input").value;
+      //   const email = document.querySelector("input[name='email']").value;
+      //   const res = await fetch("/verify-otp", {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify({ email, otp }),
+      //   });
+      //   alert(await res.text());
+      // }
+
       async function verifyOtp() {
         const otp = document.getElementById("otp-input").value;
         const email = document.querySelector("input[name='email']").value;
+
         const res = await fetch("/verify-otp", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, otp }),
         });
-        alert(await res.text());
+
+        const result = await res.text();
+        alert(result);
+
+        if (result.includes("success")) {
+          // Wait 2 seconds and redirect to login
+          setTimeout(() => {
+            window.location.href = "/login";
+          }, 2000);
+        }
       }
 
+     
       const passwordInput = document.getElementById("password");
       const togglePassword = document.getElementById("togglePassword");
       const icon = togglePassword.querySelector("i");
