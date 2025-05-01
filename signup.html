@@ -16,28 +16,38 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-image: url(Background.png);
-      background-size: auto;
+      /* background-image: url(Background.png); */
+      background-size: cover;
+      background-position: 50%;
       background-repeat: no-repeat;
+      background-color: #EBFAFB;
       font-family: Arial, sans-serif;
     }
     .form-container {
-      background: #adecd3;
+      /* background: #adecd3; */
       padding: 30px 40px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      /* border-radius: 8px; */
+      /* box-shadow: 0 2px 10px rgba(0,0,0,0.1); */
       width: 300px;
+      align-items: center;
     }
     h2 {
       text-align: center;
-      color: #333;
+      color: #024c12;
     }
     input[type="text"], input[type="password"], input[type="email"], input[type="number"] {
-      width: 100%;
+      /* width: 100%;
       padding: 10px;
       margin: 10px 0 20px;
       border: 1px solid #ccc;
-      border-radius: 5px;
+      border-radius: 5px; */
+
+      width: 100%;
+      padding: 15px 10px;
+      margin: 10px 0 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 0px 10px rgba(0,0,0,0.2);
     }
     .password-container {
       position: relative;
@@ -52,7 +62,7 @@
     }
     button {
       width: 100%;
-      padding: 10px;
+      padding: 15px;
       background: #28a745;
       color: white;
       border: none;
@@ -93,12 +103,30 @@
       border-radius: 8px;
       margin-top: 10px;
     }
+    label{
+        padding: 10px;
+        font-size: 10px;
+        color: #024c12;
+        text-align: center;
+    }
+    .mask{
+        position: fixed;    
+        top: 0;
+        left: 0;
+        z-index: -1;
+        width: 100px;
+        height:150px;
+    }
+
   </style>
 </head>
 <body>
+  <img class="mask" src="mask.png" alt="">
   <div class="form-container">
     <img src="calicare logo.png" alt="Logo" class="logo">
-    <h2>Sign Up</h2>
+    <h2>Welcome Onboard</h2>
+    <label style="font-size: 10px; font-weight: bold; color: #024c12;" for="">PLEASE ENTER YOUR DETAILS</label><br><br>
+    
     <form id="signup-form" action="/signup" method="post" enctype="multipart/form-data">
       <input type="email" name="email" required placeholder="Email" />
       <input type="text" name="username" required placeholder="Username" />

@@ -85,6 +85,10 @@ app.get('/signup', (req, res) => {
     res.sendFile(path.join(__dirname, 'signup.html'));
 });
 
+app.get('/welcome', (req, res) => {
+  res.sendFile(path.join(__dirname, 'welcome.html'));
+});
+
 
 app.get("/dashboard", (req, res) => {
     // if (!req.session.user) return res.redirect("/login.html");
@@ -94,7 +98,8 @@ app.get("/dashboard", (req, res) => {
 
 // (Optional) Redirect root URL to login
 app.get('/', (req, res) => {
-    res.redirect('/login');
+    // res.redirect('/login');
+    res.redirect('/welcome');
 });
 
 app.get("/getUserData", async (req, res) => {
