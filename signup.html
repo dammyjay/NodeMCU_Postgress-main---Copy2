@@ -1,50 +1,47 @@
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <title>Signup</title>
-    <link
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <title>Signup</title>
+  <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
   />
-    <link rel="icon" href="calicare logo.png" type="image/x-icon">
-    <style>
-      body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background-image: url(Background.png);
-        background-size: auto;
-        background-repeat: no-repeat;
-        /* background: #f0f4f8; */
-        font-family: Arial, sans-serif;
-      }
-      .form-container {
-        background: #adecd3;
-        padding: 30px 40px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        width: 300px;
-      }
-      h2 {
-        text-align: center;
-        color: #333;
-      }
-      input[type="text"], input[type="password"], [type="email"], [type="number"] {
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0 20px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
-
-      .password-container {
+  <link rel="icon" href="calicare logo.png" type="image/x-icon">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-image: url(Background.png);
+      background-size: auto;
+      background-repeat: no-repeat;
+      font-family: Arial, sans-serif;
+    }
+    .form-container {
+      background: #adecd3;
+      padding: 30px 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 300px;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    input[type="text"], input[type="password"], input[type="email"], input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .password-container {
       position: relative;
     }
-
     .toggle-password {
       position: absolute;
       top: 50%;
@@ -53,192 +50,171 @@
       cursor: pointer;
       color: #666;
     }
-      button {
-        width: 100%;
-        padding: 10px;
-        background: #28a745;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        font-weight: bold;
-        cursor: pointer;
-        margin: 10px 0 20px;
-      }
-      button:hover {
-        background: #218838;
-      }
-      p {
-        text-align: center;
-        margin-top: 15px;
-      }
-      a {
-        color: #28a745;
-        text-decoration: none;
-      }
-      a:hover {
-        text-decoration: underline;
-      }
-      .logo {
-      display: block;
-      margin: 0 auto 20px; /* centers horizontally and adds bottom space */
-      max-width: 40px; /* or adjust to suit your layout */
-    }
-
-    /* #otp-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.6); 
-      z-index: 9999;
-
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    } */
-
-    /* #otp-modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      text-align: center;
-    } */
-
-    /* #otp-modal input, #otp-modal button {
-      margin: 10px;
+    button {
+      width: 100%;
       padding: 10px;
-      border-radius: 5px;
-      width: 80%;  
-    } */
-
-    /* #otp-modal button {
-      background-color: #28a745;
+      background: #28a745;
       color: white;
       border: none;
+      border-radius: 5px;
+      font-weight: bold;
       cursor: pointer;
+      margin: 10px 0 20px;
     }
+    button:hover {
+      background: #218838;
+    }
+    p {
+      text-align: center;
+      margin-top: 15px;
+    }
+    a {
+      color: #28a745;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .logo {
+      display: block;
+      margin: 0 auto 20px;
+      max-width: 40px;
+    }
+    /* Preview Image */
+    .preview-container {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      margin-top: 15px;
+    }
+    .preview-container img {
+      max-width: 100%;
+      max-height: 150px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <img src="calicare logo.png" alt="Logo" class="logo">
+    <h2>Sign Up</h2>
+    <form id="signup-form" action="/signup" method="post" enctype="multipart/form-data">
+      <input type="email" name="email" required placeholder="Email" />
+      <input type="text" name="username" required placeholder="Username" />
+      <input type="number" name="phone" required placeholder="Phone" />
+      <select name="gender" required>
+        <option>Male</option>
+        <option>Female</option>
+      </select>
 
-    #otp-modal button:hover {
-      background-color: #218838;
-    } */
-
-    </style>
-  </head>
-  <body>
-    <div class="form-container">
-      <img src="calicare logo.png" alt="Logo" class="logo">
-      <h2>Sign Up</h2>
-      <form id="signup-form" action="/signup" method="post">
-        <!-- Form fields here -->
-        <input type="email" name="email" required placeholder="Email" />
-        <input type="text" name="username" required placeholder="Username" />
-        <input type="number" name="phone" required placeholder="Phone" />
-        <select name="gender" required>
-          <option>Male</option>
-          <option>Female</option>
-        </select>
-        <div class="password-container">
-          <input
-            id="password"
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-          />
-          <span id="togglePassword" class="toggle-password">
-            <i class="fa fa-eye"></i>
-          </span>
-        </div>
-        <button type="submit">Sign Up</button>
-      </form>
-      <p>Already have an account? <a href="/login">Login</a></p>
-    
-      <!-- OTP Modal -->
-      <div id="otp-modal" style="display: none;">
-        
-        <div style="background: #fff; padding: 20px; border-radius: 8px; text-align: center;">
-          <p style="color: #218838;">Please check your email for verification OTP sent and enter it below. </p>
-          <p style="color: #e73f07;">you can also check your spam folder if you don't see it in your inbox.</p>
-          <input id="otp-input" placeholder="Enter OTP" />
-          <button onclick="verifyOtp()">Verify OTP</button>
-        </div>
+      <div class="password-container">
+        <input
+          id="password"
+          type="password"
+          name="password"
+          placeholder="Password"
+          required
+        />
+        <span id="togglePassword" class="toggle-password">
+          <i class="fa fa-eye"></i>
+        </span>
       </div>
 
-    </div>
-
-    
-    
-
-    <script>
-      document.getElementById("signup-form").onsubmit = async (e) => {
-        e.preventDefault();
-        const formData = new FormData(e.target);
-        const payload = Object.fromEntries(formData.entries());
-    
-        const res = await fetch("/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-    
-        if (res.ok) {
-          document.getElementById("otp-modal").style.display = "block";
-        } else {
-          alert("Signup failed: " + await res.text());
-        }
-      };
-
-      // async function verifyOtp() {
-      //   const otp = document.getElementById("otp-input").value;
-      //   const email = document.querySelector("input[name='email']").value;
-      //   const res = await fetch("/verify-otp", {
-      //     method: "POST",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify({ email, otp }),
-      //   });
-      //   alert(await res.text());
-      // }
-
-      async function verifyOtp() {
-        const otp = document.getElementById("otp-input").value;
-        const email = document.querySelector("input[name='email']").value;
-
-        const res = await fetch("/verify-otp", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, otp }),
-        });
-
-        const result = await res.text();
-        alert(result);
-
-        if (result.includes("success")) {
-          // Wait 2 seconds and redirect to login
-          setTimeout(() => {
-            window.location.href = "/login";
-          }, 2000);
-        }
-      }
-
-     
-      const passwordInput = document.getElementById("password");
-      const togglePassword = document.getElementById("togglePassword");
-      const icon = togglePassword.querySelector("i");
-  
-      togglePassword.addEventListener("click", () => {
-        const isHidden = passwordInput.type === "password";
-        passwordInput.type = isHidden ? "text" : "password";
-  
-        // swap the icon
-        icon.classList.toggle("fa-eye");
-        icon.classList.toggle("fa-eye-slash");
-      });
+      <!-- File input for image upload -->
+      <input type="file" id="file-input" name="profile_picture" accept="image/*" />
       
-    </script>
-    
+      <!-- Preview image container -->
+      <div class="preview-container" id="preview-container">
+        <img id="preview-image" alt="Image Preview" />
+      </div>
 
-    
-  </body>
-  </html>
+      <button type="submit">Sign Up</button>
+    </form>
+    <p>Already have an account? <a href="/login">Login</a></p>
+
+    <!-- OTP Modal -->
+    <div id="otp-modal" style="display: none;">
+      <div style="background: #fff; padding: 20px; border-radius: 8px; text-align: center;">
+        <p style="color: #218838;">Please check your email for verification OTP sent and enter it below. </p>
+        <p style="color: #e73f07;">you can also check your spam folder if you don't see it in your inbox.</p>
+        <input id="otp-input" placeholder="Enter OTP" />
+        <button onclick="verifyOtp()">Verify OTP</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("signup-form").onsubmit = async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const payload = Object.fromEntries(formData.entries());
+
+      const res = await fetch("/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        document.getElementById("otp-modal").style.display = "block";
+      } else {
+        alert("Signup failed: " + await res.text());
+      }
+    };
+
+    async function verifyOtp() {
+      const otp = document.getElementById("otp-input").value;
+      const email = document.querySelector("input[name='email']").value;
+
+      const res = await fetch("/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
+      });
+
+      const result = await res.text();
+      alert(result);
+
+      if (result.includes("success")) {
+        // Wait 2 seconds and redirect to login
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
+      }
+    }
+
+    const passwordInput = document.getElementById("password");
+    const togglePassword = document.getElementById("togglePassword");
+    const icon = togglePassword.querySelector("i");
+
+    togglePassword.addEventListener("click", () => {
+      const isHidden = passwordInput.type === "password";
+      passwordInput.type = isHidden ? "text" : "password";
+
+      // swap the icon
+      icon.classList.toggle("fa-eye");
+      icon.classList.toggle("fa-eye-slash");
+    });
+
+    // Handle image preview
+    const fileInput = document.getElementById("file-input");
+    const previewContainer = document.getElementById("preview-container");
+    const previewImage = document.getElementById("preview-image");
+
+    fileInput.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          previewContainer.style.display = "flex";  // Display the preview container
+          previewImage.src = e.target.result;  // Set the image source to the selected file
+        };
+        reader.readAsDataURL(file);  // Read the file as a data URL
+      } else {
+        previewContainer.style.display = "none";  // Hide the preview if no file is selected
+      }
+    });
+  </script>
+</body>
+</html>
