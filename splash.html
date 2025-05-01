@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Splash Screen</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #EBFAFB;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      font-family: Arial, sans-serif;
+      position: relative;
+    }
+
+    .logo {
+      width: 150px;
+      height: 150px;
+      margin-bottom: 30px;
+    }
+
+    .circle-loader {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #ddd;
+      border-top: 6px solid #28a745;
+      border-radius: 50%;
+      animation: spin 2s linear infinite;
+      position: absolute;
+      bottom: 40px;
+    }
+
+    @keyframes spin {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .mask{
+        position: fixed;    
+        top: 0;
+        left: 0;
+        z-index: -1;
+        width: 100px;
+        height:150px;
+    }
+  </style>
+</head>
+<body>
+    <img class="mask" src="mask.png" alt="">
+    <!-- Logo image should be in the same directory as this HTML file -->
+  <img src="calicare logo.png" alt="Logo" class="logo" />
+  
+  <div class="circle-loader"></div>
+
+  <script>
+    // Redirect to welcome page after 3 seconds
+    setTimeout(() => {
+      window.location.href = "welcome.html";  // Update to your actual welcome page
+    }, 5000);
+  </script>
+
+</body>
+</html>
