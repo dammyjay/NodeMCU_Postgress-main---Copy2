@@ -48,6 +48,13 @@ const pool = new Pool({
     },
   
   });
+
+  const cors = require('cors');
+
+  app.use(cors({
+    origin: 'https://calicareapp.onrender.com', // Your frontend domain
+    credentials: true                            // Allow cookies to be sent
+  }));
 app.use(session({
     store: new PgSession({
       pool: pool,                // your pg `Pool` instance
@@ -58,7 +65,17 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
+      // secure: process.env.NODE_ENV === 'production',
+      // maxAge: 2 * 60 * 60 * 1000 // 2 hours
+
+      // ------- for local testing
+      // secure: process.env.NODE_ENV === 'production',
+      // sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      // maxAge: 2 * 60 * 60 * 1000
+
+      //-------- for hosting 
+      secure: true,          // ✅ Must be true for HTTPS
+      sameSite: 'none',      // ✅ Required for cross-origin cookies
       maxAge: 2 * 60 * 60 * 1000 // 2 hours
     }
   }));
