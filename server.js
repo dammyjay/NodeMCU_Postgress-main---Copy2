@@ -8,31 +8,30 @@ const nodemailer = require("nodemailer");
 const { Pool } = require("pg");
 const crypto = require('crypto');
 require('dotenv').config(); // Load .env variables
-const multer = require("multer");
-const upload = multer({ dest: "uploads/" }); // You can later use cloud storage if needed
-
-// const cloudinary = require('cloudinary').v2;
 // const multer = require("multer");
-// const { CloudinaryStorage } = require("multer-storage-cloudinary");
+// const upload = multer({ dest: "uploads/" }); // You can later use cloud storage if needed
 
-// Cloudinary config
-// cloudinary.config({
-//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-//   api_key:    process.env.CLOUDINARY_API_KEY,
-//   api_secret: process.env.CLOUDINARY_API_SECRET,
-// });
+const cloudinary = require('cloudinary').v2;
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
-// // Multer + Cloudinary Storage
-// const storage = new CloudinaryStorage({
-//   cloudinary: cloudinary,
-//   params: {
-//     folder: 'profile_pictures', // Optional Cloudinary folder name
-//     allowed_formats: ['jpg', 'jpeg', 'png'],
-//     transformation: [{ width: 300, height: 300, crop: 'limit' }],
-//   },
-// });
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-// const upload = multer({ storage: storage });
+// Multer + Cloudinary Storage
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'profile_pictures', // Optional Cloudinary folder name
+    allowed_formats: ['jpg', 'jpeg', 'png'],
+    transformation: [{ width: 300, height: 300, crop: 'limit' }],
+  },
+});
+
+const upload = multer({ storage: storage });
 
 
 const connectionString = process.env.DATABASE_URL;
@@ -233,9 +232,14 @@ app.get("/getUserData", async (req, res) => {
 //   });
   
   app.post("/signup", upload.single("profile_picture"), async (req, res) => {
+    
     const { email, username, phone, gender, password } = req.body;
     console.log("📸 Uploaded File:", req.file); // <- log this
-    const profile_picture = req.file ? req.file.filename : null;
+    // this code below that will store the file in the uploads folder to the database
+    // const profile_picture = req.file ? req.file.filename : null;
+
+    //this code below that will store the file in the cloudinary to the database
+    const profile_picture = req.file ? req.file.path : null;
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     console.log("📷 Filename to save in DB:", profile_picture);
     

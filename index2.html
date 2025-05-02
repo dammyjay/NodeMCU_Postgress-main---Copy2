@@ -349,7 +349,8 @@
             .then(user => {
             document.getElementById('usernameDisplay').innerText = user.username;
             if (user.profile_picture) {
-                document.getElementById('userPhoto').src = '/uploads/' + user.profile_picture;
+                // document.getElementById('userPhoto').src = '/uploads/' + user.profile_picture;
+                document.getElementById('userPhoto').src = user.profile_picture;
             }
             })
             .catch(err => {

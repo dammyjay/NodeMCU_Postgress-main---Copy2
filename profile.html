@@ -107,7 +107,7 @@
         document.getElementById("phone").innerText = user.phone;
         document.getElementById("gender").innerText = user.gender;
         if (user.profile_picture) {
-          document.getElementById("profilePic").src = "/uploads/" + user.profile_picture;
+          document.getElementById("profilePic").src = user.profile_picture;
         }
       })
       .catch(() => alert("Error loading profile"));
