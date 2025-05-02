@@ -175,6 +175,7 @@
   </div>
 
   <script>
+<<<<<<< HEAD
     // document.getElementById("signup-form").onsubmit = async (e) => {
     //   e.preventDefault();
     //   const formData = new FormData(e.target);
@@ -200,6 +201,17 @@
       const res = await fetch("/signup", {
         method: "POST",
         body: formData, // ✅ Send raw FormData
+=======
+    document.getElementById("signup-form").onsubmit = async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const payload = Object.fromEntries(formData.entries());
+
+      const res = await fetch("/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+>>>>>>> 1b6d8d714533ec06a952ca70f856b27aa001aae8
       });
 
       if (res.ok) {
@@ -209,7 +221,10 @@
       }
     };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1b6d8d714533ec06a952ca70f856b27aa001aae8
     async function verifyOtp() {
       const otp = document.getElementById("otp-input").value;
       const email = document.querySelector("input[name='email']").value;

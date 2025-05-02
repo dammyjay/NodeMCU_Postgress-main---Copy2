@@ -125,7 +125,11 @@ app.get('/splash', (req, res) => {
 
 app.get("/dashboard", (req, res) => {
     // if (!req.session.user) return res.redirect("/login.html");
+<<<<<<< HEAD
     res.sendFile(path.join(__dirname, "index2.html"));
+=======
+    res.sendFile(path.join(__dirname, "index.html"));
+>>>>>>> 1b6d8d714533ec06a952ca70f856b27aa001aae8
     // res.render("dashboard", { user: req.session.user });
   });
 
@@ -142,6 +146,7 @@ app.get("/getUserData", async (req, res) => {
     const data = await pool.query("SELECT * FROM nodemcu_data WHERE user_id = $1 AND device_ip = $2", [userId, device_ip]);
     res.json(data.rows);
   });
+<<<<<<< HEAD
 
   app.get("/getProfile", async (req, res) => {
     if (!req.session.user) return res.status(401).send("Not logged in");
@@ -232,6 +237,51 @@ app.post("/verify-otp", async (req, res) => {
 
 
   
+=======
+
+
+app.post("/signup", async (req, res) => {
+    console.log('Inserted into pending_users (or nodemcu_table) for:', /* email or temperature, humidity */);
+    // console.log('>>> SIGNUP BODY:', req.body);
+    console.log('>>> req.body =', req.body);
+    const { email, username, phone, gender, password } = req.body;
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  
+    await pool.query(`
+      INSERT INTO pending_users (email, username, phone, gender, password, otp)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      ON CONFLICT (email) DO UPDATE SET otp = $6, created_at = CURRENT_TIMESTAMP
+    `, [email, username, phone, gender, password, otp]);
+
+  
+    await transporter.sendMail({
+      to: email,
+      subject: "Your OTP Code",
+      text: `Your OTP is: ${otp}`,
+    });
+  
+    res.sendStatus(200);
+  });
+  
+
+app.post("/verify-otp", async (req, res) => {
+    const { email, otp } = req.body;
+    const result = await pool.query("SELECT * FROM pending_users WHERE email = $1 AND otp = $2", [email, otp]);
+  
+    if (result.rows.length === 0) return res.send("Invalid OTP");
+  
+    const user = result.rows[0];
+    await pool.query("INSERT INTO users (email, username, phone, gender, password) VALUES ($1, $2, $3, $4, $5)", 
+      [user.email, user.username, user.phone, user.gender, user.password]);
+  
+    await pool.query("DELETE FROM pending_users WHERE email = $1", [email]);
+  
+    res.send("Verification successful. You can now login.");
+    // alert("Verification successful. You can now login.");
+    // res.redirect("/login");
+  });
+  
+>>>>>>> 1b6d8d714533ec06a952ca70f856b27aa001aae8
   app.get('/forgot-password', (req, res) => {
     res.sendFile(path.join(__dirname, 'forgot-password.html'));
   });
