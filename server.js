@@ -55,6 +55,8 @@ const pool = new Pool({
     origin: 'https://calicareapp.onrender.com', // Your frontend domain
     credentials: true                            // Allow cookies to be sent
   }));
+
+  app.set("trust proxy", 1); // trust first proxy
 app.use(session({
     store: new PgSession({
       pool: pool,                // your pg `Pool` instance
