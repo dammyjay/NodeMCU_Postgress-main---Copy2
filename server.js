@@ -1,6 +1,7 @@
 const WebSocket = require("ws");
 const express = require("express");
 const path = require("path");
+const cors = require('cors');
 const session = require("express-session");
 const PgSession = require("connect-pg-simple")(session);
 const nodemailer = require("nodemailer");
@@ -49,7 +50,7 @@ const pool = new Pool({
   
   });
 
-  const cors = require('cors');
+
 
   app.use(cors({
     origin: 'https://calicareapp.onrender.com', // Your frontend domain
