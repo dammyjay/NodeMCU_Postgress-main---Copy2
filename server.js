@@ -96,6 +96,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Route for login page
 app.get('/login', (req, res) => {
+  // console.log("✅ Login success:", result.rows[0]);
     res.sendFile(path.join(__dirname, 'login.html'));
 });
 
@@ -145,6 +146,7 @@ app.get("/getUserData", async (req, res) => {
 
   app.get("/getProfile", async (req, res) => {
     if (!req.session.user) return res.status(401).send("Not logged in");
+    console.log("🔍 Session user:", req.session.user);
     const userId = req.session.user.id;
     const result = await pool.query("SELECT * FROM users WHERE id = $1", [userId]);
     res.json(result.rows[0]);
@@ -224,7 +226,7 @@ app.post("/verify-otp", async (req, res) => {
     );    
     
     await pool.query("DELETE FROM pending_users WHERE email = $1", [email]);
-  
+    console.log("✅ User added to users table:", user.email);
     res.send("Verification successful. You can now login.");
     // alert("Verification successful. You can now login.");
     // res.redirect("/login");

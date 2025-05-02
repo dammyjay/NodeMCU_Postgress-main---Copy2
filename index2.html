@@ -328,14 +328,33 @@
     </script> -->
 
     <script>
-        fetch('/getProfile')
-          .then(res => res.json())
-          .then(user => {
+        // fetch('/getProfile')
+        //   .then(res => res.json())
+        //   .then(user => {
+        //     document.getElementById('usernameDisplay').innerText = user.username;
+        //     if (user.profile_picture) {
+        //       document.getElementById('userPhoto').src = '/uploads/' + user.profile_picture;
+        //     }
+        //   });
+
+        fetch('/getProfile', {
+            method: 'GET',
+            credentials: 'include'  // <-- This tells the browser to send cookies
+            })
+            .then(res => {
+            if (!res.ok) throw new Error("User not logged in");
+            return res.json();
+            })
+            .then(user => {
             document.getElementById('usernameDisplay').innerText = user.username;
             if (user.profile_picture) {
-              document.getElementById('userPhoto').src = '/uploads/' + user.profile_picture;
+                document.getElementById('userPhoto').src = '/uploads/' + user.profile_picture;
             }
-          });
+            })
+            .catch(err => {
+            console.error("Profile fetch error:", err);
+            });
+
       </script>
 
 </body>
