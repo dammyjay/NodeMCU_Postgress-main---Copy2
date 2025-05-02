@@ -1,32 +1,89 @@
 const WebSocket = require("ws");
 const express = require("express");
 const path = require("path");
+const session = require("express-session");
+const PgSession = require("connect-pg-simple")(session);
+const nodemailer = require("nodemailer");
 const { Pool } = require("pg");
+const crypto = require('crypto');
 require('dotenv').config(); // Load .env variables
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" }); // You can later use cloud storage if needed
+
+// const cloudinary = require('cloudinary').v2;
+// const multer = require("multer");
+// const { CloudinaryStorage } = require("multer-storage-cloudinary");
+
+// Cloudinary config
+// cloudinary.config({
+//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//   api_key:    process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_API_SECRET,
+// });
+
+// // Multer + Cloudinary Storage
+// const storage = new CloudinaryStorage({
+//   cloudinary: cloudinary,
+//   params: {
+//     folder: 'profile_pictures', // Optional Cloudinary folder name
+//     allowed_formats: ['jpg', 'jpeg', 'png'],
+//     transformation: [{ width: 300, height: 300, crop: 'limit' }],
+//   },
+// });
+
+// const upload = multer({ storage: storage });
+
 
 const connectionString = process.env.DATABASE_URL;
+const passwordResetTokens = new Map(); // In-memory store for demo. Use DB for production.
+
 
 const app = express();
+
+
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL ,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  
+  });
+app.use(session({
+    store: new PgSession({
+      pool: pool,                // your pg `Pool` instance
+      tableName: 'session',      // you can name this whatever you like
+      createTableIfMissing: true // auto-create the table on startup
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 2 * 60 * 60 * 1000 // 2 hours
+    }
+  }));
+
 const server = require("http").createServer(app);
 const wss = new WebSocket.Server({ server });
 
-// PostgreSQL Connection
-// const pool = new Pool({
-//     connectionString: connectionString,
-//     ssl: { rejectUnauthorized: false }
-// });
-
-
 
 // const { Pool } = require('pg');
+console.log('🔗 Connecting to Postgres with:', {
+    host:   process.env.DB_HOST,
+    port:   process.env.DB_PORT,
+    database: process.env.DB_NAME,
+    user:   process.env.DB_USER,
+    databaseurl: process.env.DATABASE_URL,
+  });
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL ,
-  ssl: {
-    rejectUnauthorized: false,
-  },
 
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: { user: process.env.EMAIL, pass: process.env.EMAIL_PASS },
 });
+
+
+app.use(express.json());
 
 // Middleware to parse form data
 app.use(express.urlencoded({ extended: true }));
@@ -34,77 +91,288 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files (CSS, JS)
 app.use(express.static('public'));
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 // Route for login page
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 });
+
+app.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+    const result = await pool.query("SELECT * FROM users WHERE email = $1 AND password = $2", [email, password]);
+  
+    if (result.rows.length === 0) return res.send("Invalid credentials");
+  
+    req.session.user = result.rows[0];
+    res.redirect("/dashboard");
+  });
 
 // Route for signup page
 app.get('/signup', (req, res) => {
     res.sendFile(path.join(__dirname, 'signup.html'));
 });
 
-// After login success, show dashboard
-app.get('/dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+app.get('/welcome', (req, res) => {
+  res.sendFile(path.join(__dirname, 'welcome.html'));
 });
+
+app.get('/splash', (req, res) => {
+  res.sendFile(path.join(__dirname, 'splash.html'));
+});
+
+
+app.get("/dashboard", (req, res) => {
+    // if (!req.session.user) return res.redirect("/login.html");
+    res.sendFile(path.join(__dirname, "index2.html"));
+    // res.render("dashboard", { user: req.session.user });
+  });
 
 // (Optional) Redirect root URL to login
 app.get('/', (req, res) => {
+    // res.redirect('/login');
+    // res.redirect('/welcome');
+    res.redirect('/splash');
+});
+
+app.get("/getUserData", async (req, res) => {
+    const { device_ip } = req.query;
+    const userId = req.session.user.id;
+    const data = await pool.query("SELECT * FROM nodemcu_data WHERE user_id = $1 AND device_ip = $2", [userId, device_ip]);
+    res.json(data.rows);
+  });
+
+  app.get("/getProfile", async (req, res) => {
+    if (!req.session.user) return res.status(401).send("Not logged in");
+    const userId = req.session.user.id;
+    const result = await pool.query("SELECT * FROM users WHERE id = $1", [userId]);
+    res.json(result.rows[0]);
+  });
+
+  app.get("/profile", (req, res) => {
+    if (!req.session.user) return res.redirect("/login");
+    res.sendFile(path.join(__dirname, "profile.html"));
+  });
+
+  app.get('/logout', (req, res) => {
+    req.session.destroy();
     res.redirect('/login');
-});
-
-//------------------------------------------------
-// Signup
-// app.post('/signup', async (req, res) => {
-//     const { username, password } = req.body;
+  });
   
-//     try {
-//       const result = await pool.query('INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *', [username, password]);
-//       res.send('Signup successful! <a href="/login">Login now</a>');
-//     } catch (err) {
-//       console.error(err);
-//       res.send('Username already exists or error occurred. <a href="/signup">Try again</a>');
-//     }
+
+
+// app.post("/signup", async (req, res) => {
+//     console.log('Inserted into pending_users (or nodemcu_table) for:', /* email or temperature, humidity */);
+//     // console.log('>>> SIGNUP BODY:', req.body);
+//     console.log('>>> req.body =', req.body);
+//     const { email, username, phone, gender, password } = req.body;
+//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  
+//     await pool.query(`
+//       INSERT INTO pending_users (email, username, phone, gender, password, otp)
+//       VALUES ($1, $2, $3, $4, $5, $6)
+//       ON CONFLICT (email) DO UPDATE SET otp = $6, created_at = CURRENT_TIMESTAMP
+//     `, [email, username, phone, gender, password, otp]);
+
+  
+//     await transporter.sendMail({
+//       to: email,
+//       subject: "Your OTP Code",
+//       text: `Your OTP is: ${otp}`,
+//     });
+  
+//     res.sendStatus(200);
 //   });
   
-//   // Login
-//   app.post('/login', async (req, res) => {
-//     const { username, password } = req.body;
+  app.post("/signup", upload.single("profile_picture"), async (req, res) => {
+    const { email, username, phone, gender, password } = req.body;
+    console.log("📸 Uploaded File:", req.file); // <- log this
+    const profile_picture = req.file ? req.file.filename : null;
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log("📷 Filename to save in DB:", profile_picture);
+    
+    await pool.query(`
+      INSERT INTO pending_users (email, username, phone, gender, password, otp, profile_picture)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      ON CONFLICT (email) DO UPDATE SET otp = $6, created_at = CURRENT_TIMESTAMP
+    `, [email, username, phone, gender, password, otp, profile_picture]);
   
-//     try {
-//       const result = await pool.query('SELECT * FROM users WHERE username = $1 AND password = $2', [username, password]);
+    await transporter.sendMail({
+      to: email,
+      subject: "Your OTP Code",
+      text: `Your OTP is: ${otp}`,
+    });
   
-//       if (result.rows.length > 0) {
-//         res.redirect('/dashboard');
-//       } else {
-//         res.send('Invalid credentials. <a href="/login">Try again</a>');
-//       }
-//     } catch (err) {
-//       console.error(err);
-//       res.send('Error during login. <a href="/login">Try again</a>');
-//     }
-//   });
+    res.sendStatus(200);
+  });
   
-//-------------------------------------------------------
 
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    // 🔥 Here you would normally check in your database
+app.post("/verify-otp", async (req, res) => {
+    const { email, otp } = req.body;
+    const result = await pool.query("SELECT * FROM pending_users WHERE email = $1 AND otp = $2", [email, otp]);
+  
+    if (result.rows.length === 0) return res.send("Invalid OTP");
+  
+    const user = result.rows[0];
+    // await pool.query("INSERT INTO users (email, username, phone, gender, password, profile_picture) VALUES ($1, $2, $3, $4, $5)", 
+    //   [user.email, user.username, user.phone, user.gender, user.password]);
+  
+    await pool.query(
+      "INSERT INTO users (email, username, phone, gender, password, profile_picture) VALUES ($1, $2, $3, $4, $5, $6)", 
+      [user.email, user.username, user.phone, user.gender, user.password, user.profile_picture]
+    );    
+    
+    await pool.query("DELETE FROM pending_users WHERE email = $1", [email]);
+  
+    res.send("Verification successful. You can now login.");
+    // alert("Verification successful. You can now login.");
+    // res.redirect("/login");
+  });
 
-    if (username === 'admin' && password === '1234') {
-        res.redirect('/dashboard'); // login success
-    } else {
-        res.send('Invalid credentials! <a href="/login">Try again</a>');
+
+  
+  app.get('/forgot-password', (req, res) => {
+    res.sendFile(path.join(__dirname, 'forgot-password.html'));
+  });
+  
+  // Handle forgot password form
+  app.post('/forgot-password', async (req, res) => {
+    const { email } = req.body;
+    const userResult = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    if (userResult.rows.length === 0) return res.send("No account with that email found.");
+  
+    const token = crypto.randomBytes(20).toString('hex');
+    const expires = Date.now() + 3600000; // 1 hour
+  
+    // Save token and expiry
+    passwordResetTokens.set(token, { email, expires });
+  
+    const resetLink = `http://${req.headers.host}/reset-password/${token}`;
+    // const resetLink = `https://calicareapp.onrender.com//reset-password/${token}`;
+    
+  
+    await transporter.sendMail({
+      to: email,
+      subject: "Password Reset",
+      text: `Click the link to reset your password: ${resetLink}`,
+    });
+  
+    res.send("Reset link sent to your email.");
+  });
+
+  app.get('/reset-password/:token', (req, res) => {
+    const tokenData = passwordResetTokens.get(req.params.token);
+  
+    if (!tokenData || tokenData.expires < Date.now()) {
+      return res.send("Reset token is invalid or has expired.");
     }
-});
+  
+    // You can dynamically render the form with the token
+    // res.send(`
+    //   <form action="/reset-password/${req.params.token}" method="POST">
+    //     <input type="text" name="password" placeholder="Enter new password" required />
+    //     <button type="submit">Reset Password</button>
+    //   </form>
+    // `);
 
-app.post('/signup', (req, res) => {
-    const { username, password } = req.body;
-    // 🔥 Here you would normally save to your database
-    res.send('Signup successful! <a href="/login">Login now</a>');
-});
+    res.send(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <title>Reset Password</title>
+          <style>
+            body {
+              font-family: "Segoe UI", sans-serif;
+              background-color: #f0f2f5;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              height: 100vh;
+            }
+        
+            .container {
+              background: #fff;
+              padding: 40px 30px;
+              border-radius: 10px;
+              box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+              text-align: center;
+              width: 100%;
+              max-width: 400px;
+            }
+        
+            h2 {
+              margin-bottom: 20px;
+              color: #333;
+            }
+        
+            input[type="text"] {
+                  width: 100%;
+                padding: 10px;
+                margin: 10px 0 20px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+        
+            button {
+              padding: 12px 20px;
+              width: 100%;
+              background-color: #28a745;
+              color: white;
+              border: none;
+              border-radius: 6px;
+              font-size: 16px;
+              cursor: pointer;
+              transition: background-color 0.3s ease;
+            }
+        
+            button:hover {
+              background-color: #1e7e34;
+            }
+        
+            a {
+              display: inline-block;
+              margin-top: 20px;
+              color: #007bff;
+              text-decoration: none;
+            }
+        
+            a:hover {
+              text-decoration: underline;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h2>Set New Password</h2>
+            <form action="/reset-password/${req.params.token}" method="POST">
+              <input type="text" name="password" placeholder="Enter new password" required />
+              <button type="submit">Reset Password</button>
+            </form>
+            <a href="/login">Back to Login</a>
+          </div>
+        </body>
+        </html>
+        `);
+        
 
+    
+  });
+  
+  app.post('/reset-password/:token', async (req, res) => {
+    const tokenData = passwordResetTokens.get(req.params.token);
+    if (!tokenData || tokenData.expires < Date.now()) {
+      return res.send("Reset token is invalid or has expired.");
+    }
+  
+    const { password } = req.body;
+    await pool.query("UPDATE users SET password = $1 WHERE email = $2", [password, tokenData.email]);
+  
+    passwordResetTokens.delete(req.params.token);
+    res.send("Password successfully updated. You can now <a href='/login'>login</a>.");
+  });
+  
 
 // Ensure table exists
 async function createTableIfNotExists() {
@@ -145,6 +413,8 @@ wss.on("connection", (ws) => {
 // Insert data into PostgreSQL
 app.post("/postData", express.urlencoded({ extended: true }), async (req, res) => {
     console.log("Received data:", req.body);
+    console.log('Inserted into pending_users (or nodemcu_table) for:', /* email or temperature, humidity */);
+
     const { temperature, humidity } = req.body;
     const date = new Date().toISOString().split("T")[0];
     const time = new Date().toISOString().split("T")[1].split(".")[0];
@@ -204,24 +474,6 @@ app.get("/getDataByDate", async (req, res) => {
         res.status(500).json({ error: "Database filter failed" });
     }
 });
-// app.get("/getDataByDateAndTime", async (req, res) => {
-//     const { startDate, endDate, startTime, endTime } = req.query;
-
-//     if (!startDate || !endDate || !startTime || !endTime) {
-//         return res.status(400).json({ error: "Missing date or time parameters" });
-//     }
-
-//     try {
-//         const result = await pool.query(
-//             "SELECT * FROM nodemcu_table WHERE (date BETWEEN $1 AND $2) AND (time BETWEEN $3 AND $4) ORDER BY id DESC",
-//             [startDate, endDate, startTime, endTime]
-//         );
-//         res.json(result.rows);
-//     } catch (error) {
-//         console.error("Error filtering data:", error);
-//         res.status(500).json({ error: "Database filter failed" });
-//     }
-// });
 
 
 const PORT = process.env.PORT || 3000;

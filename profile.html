@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="calicare logo.png" type="image/x-icon" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f3fbfb;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .profile-card {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .profile-pic {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      border: 3px solid #28a745;
+    }
+
+    h2 {
+      margin: 10px 0;
+      color: #024c12;
+    }
+
+    .info {
+      text-align: left;
+      margin-top: 20px;
+    }
+
+    .info p {
+      margin: 10px 0;
+      font-size: 15px;
+    }
+
+    .label {
+      font-weight: bold;
+      color: #555;
+    }
+
+    .actions {
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn-green {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .btn-red {
+      background-color: #e73f07;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-card">
+    <img id="profilePic" class="profile-pic" src="default-avatar.png" alt="Profile Picture" />
+    <h2 id="username">Username</h2>
+
+    <div class="info">
+      <p><span class="label">Email:</span> <span id="email"></span></p>
+      <p><span class="label">Phone:</span> <span id="phone"></span></p>
+      <p><span class="label">Gender:</span> <span id="gender"></span></p>
+    </div>
+
+    <div class="actions">
+      <a href="/dashboard" class="btn btn-green">Back to Dashboard</a>
+      <a href="/logout" class="btn btn-red">Logout</a>
+    </div>
+  </div>
+
+  <script>
+    fetch("/getProfile")
+      .then(res => res.json())
+      .then(user => {
+        document.getElementById("username").innerText = user.username;
+        document.getElementById("email").innerText = user.email;
+        document.getElementById("phone").innerText = user.phone;
+        document.getElementById("gender").innerText = user.gender;
+        if (user.profile_picture) {
+          document.getElementById("profilePic").src = "/uploads/" + user.profile_picture;
+        }
+      })
+      .catch(() => alert("Error loading profile"));
+  </script>
+</body>
+</html>
