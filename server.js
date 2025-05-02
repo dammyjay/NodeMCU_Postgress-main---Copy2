@@ -107,10 +107,14 @@ app.post("/login", async (req, res) => {
     if (result.rows.length === 0) return res.send("Invalid credentials");
   
     req.session.user = result.rows[0];
+    // req.session.user = { id: user.id, username: user.username }; // Must set this
+
+    
     res.redirect("/dashboard");
   });
 
 // Route for signup page
+
 app.get('/signup', (req, res) => {
     res.sendFile(path.join(__dirname, 'signup.html'));
 });
@@ -144,14 +148,37 @@ app.get("/getUserData", async (req, res) => {
     res.json(data.rows);
   });
 
-  app.get("/getProfile", async (req, res) => {
-    if (!req.session.user) return res.status(401).send("Not logged in");
-    console.log("🔍 Session user:", req.session.user);
-    const userId = req.session.user.id;
-    const result = await pool.query("SELECT * FROM users WHERE id = $1", [userId]);
-    res.json(result.rows[0]);
-  });
+  // app.get("/getProfile", async (req, res) => {
+  //   if (!req.session.user) return res.status(401).send("Not logged in");
+  //   console.log("🔍 Session user:", req.session.user);
+  //   const userId = req.session.user.id;
+  //   const result = await pool.query("SELECT * FROM users WHERE id = $1", [userId]);
+  //   res.json(result.rows[0]);
+  // });
 
+  app.get("/getProfile", async (req, res) => {
+    try {
+      if (!req.session.user) {
+        return res.status(401).send("Not logged in");
+      }
+  
+      console.log("🔍 Session user:", req.session.user);
+      const userId = req.session.user.id;
+  
+      const result = await pool.query("SELECT * FROM users WHERE id = $1", [userId]);
+  
+      if (result.rows.length === 0) {
+        return res.status(404).send("User not found");
+      }
+  
+      res.json(result.rows[0]);
+    } catch (error) {
+      console.error("❌ Error in /getProfile:", error);
+      res.status(500).send("Server error");
+    }
+  });
+  
+ 
   app.get("/profile", (req, res) => {
     if (!req.session.user) return res.redirect("/login");
     res.sendFile(path.join(__dirname, "profile.html"));
