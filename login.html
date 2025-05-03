@@ -25,11 +25,12 @@
     }
     .form-container {
       /* background: #adecd3; */
-      background-color: rgba(130, 236, 236, 0.3); ;
+      /* background-color: rgba(130, 236, 236, 0.3); ; */
       padding: 30px 40px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      /* border-radius: 8px; */
+      /* box-shadow: 0 2px 10px rgba(0,0,0,0.1); */
       width: 300px;
+      justify-content: center;
     }
     h2 {
       text-align: center;
@@ -70,7 +71,7 @@
     button {
       width: 100%;
       padding: 15px;
-      background: #28a745;
+      background: #24D0D6;
       color: white;
       border: none;
       border-radius: 10px;
@@ -78,14 +79,14 @@
       cursor: pointer;
     }
     button:hover {
-      background: #218838;
+      background: #20b2b7;
     }
     p {
       text-align: center;
       margin-top: 15px;
     }
     a {
-      color: #28a745;
+      color: #1270B0;
       text-decoration: none;
     }
     a:hover {
@@ -99,7 +100,7 @@
     label{
         padding: 10px;
         font-size: 10px;
-        color: #024c12;
+        color: #000000;
     }
     .mask{
         position: fixed;    
@@ -109,14 +110,90 @@
         width: 100px;
         height:150px;
     }
+    .log-details {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+    .log-details h2{
+        color: #295153;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    .log-details p{
+        color: #000000;
+        font-size: 11px;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    .background-image {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -1; /* Puts it behind everything */
+      width: 50vw;  /* Or set specific width/height */
+      height: 50vh;
+      object-fit: cover;
+      opacity: 1;  /* Optional: Make it faint */
+    }
+
+    .checkbox-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .checkbox-label input {
+      margin-right: 10px;
+    }
+    .checkbox-label span {
+      font-size: 14px;
+      color: #555;
+    }
+    @media (max-width: 600px) {
+      .form-container {
+        width: 90%;
+        padding: 20px;
+      }
+      .background-image {
+        width: 500vw; /* Full width on small screens */
+        height: auto; /* Maintain aspect ratio */
+      }
+    }
+    .log-with {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      cursor: pointer;
+      width: 100%;
+      
+      font-size: 14px;
+    }
+
+    .log-with:hover {
+      color: #145dbf; /* darker blue on hover */
+    }
+
+    .log-with img {
+      width: 15px;
+      height: 15px;
+    }
 
   </style>
 </head>
 <body>
   <img class="mask" src="mask.png" alt="">
+  <img src="necktrans.png" class="background-image" alt="Background">
   <div class="form-container">
     <img src="calicare logo.png" alt="Logo" class="logo">
-    <h2>Login</h2>
+    <div class="log-details">
+      <h2>Welcome Back!</h2>
+      <p>PLEASE ENTER YOUR DETAILS</p>
+    </div>
+    
     <form action="/login" method="post">
 
       <div class="container">
@@ -140,7 +217,23 @@
           <i class="fa fa-eye"></i>
         </span>
       </div>
-      <p><a href="/forgot-password">Forgot Password?</a></p>
+      <div class="checkbox-label">
+        <label class="checkbox-label">
+          <input type="checkbox" name="remember" />
+          Remember me
+        </label>
+        <p><a href="/forgot-password">Forgot Password?</a></p>
+      </div>
+
+      <div class="log-with">
+        <img src="face.png" alt="Site Logo" id="logo">
+        <p style="font-size: 12px; font-weight: bold;">Log in with Facebook</p>
+    </div>
+
+    <div class="log-with">
+        <img src="goog.png" alt="Site Logo" id="logo">
+        <p style="font-size: 12px; font-weight: bold;">Log in with Google</p>
+    </div>
       <button type="submit" >Login</button>
 
       

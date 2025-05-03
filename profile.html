@@ -5,6 +5,10 @@
   <title>User Profile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="calicare logo.png" type="image/x-icon" />
+  <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+/>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -18,10 +22,10 @@
     }
 
     .profile-card {
-      background-color: #ffffff;
+      /* background-color: #ffffff; */
       padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      /* border-radius: 12px; */
+      /* box-shadow: 0 4px 12px rgba(0,0,0,0.1); */
       width: 90%;
       max-width: 400px;
       text-align: center;
@@ -53,7 +57,14 @@
 
     .label {
       font-weight: bold;
-      color: #555;
+      color: #24D0D6;
+      padding-right: 10px;
+      padding-left: 10px;
+    }
+
+    .label2 {
+      color: #000000;
+      font-weight: bold;
     }
 
     .actions {
@@ -79,17 +90,111 @@
       background-color: #e73f07;
       color: white;
     }
+    .detail {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: white;
+      width: 100%;
+      padding: 15px 10px;
+      /* padding-left: 0px; */
+      margin: 10px 0 20px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0px 10px rgba(0,0,0,0.2);
+    }
+    .log{
+      display: flex;
+      justify-content: flex-end;  /* Aligns the icon to the right */
+      align-items: center; /* Centers the icon vertically */
+      /* width: 100%; */
+    }
+    .data{
+      width: 100%;
+    }
+    .edit{
+      display: flex;
+      justify-content: space-between;  /* Aligns the icon to the right */
+      align-items: center; /* Centers the icon vertically */
+      margin-bottom: 10px;
+      margin-top: 10px;
+    }
+    .icono{
+      color: white;
+      font-size: 20px;
+      padding-right: 10px;
+      padding-left: 10px;
+      padding: 7px;
+      background-color: #024c12 ;
+      border-radius: 100%;
+    }
   </style>
 </head>
 <body>
+  
   <div class="profile-card">
+    <div class="edit">
+      <h3>Profile</h3>
+    <!-- <a href="editprofile.html" class="btn btn-green">Edit Profile</a> -->
+     <a class="icono" href="editprofile.html" ><i class="fa fa-pencil"></i></a>
+  </div>
     <img id="profilePic" class="profile-pic" src="default-avatar.png" alt="Profile Picture" />
     <h2 id="username">Username</h2>
 
     <div class="info">
-      <p><span class="label">Email:</span> <span id="email"></span></p>
-      <p><span class="label">Phone:</span> <span id="phone"></span></p>
-      <p><span class="label">Gender:</span> <span id="gender"></span></p>
+      <h4>Personal Information</h4>
+      <div class="detail">
+      
+        <p class="data"><span class="label">Username:</span> <span class="label2" id="username2"></span> 
+          <div class="log">
+            <span  class="toggle-password">
+              <i class="fa fa-user"></i>
+            </span>
+          </div>
+        </p>
+      </div>
+      <div class="detail">
+        <p class="data"><span class="label">Email:</span> <span class="label2" id="email"></span> 
+          <div class="log">
+            <span  class="toggle-password">
+              <i class="fa fa-envelope"></i>
+            </span>
+          </div>
+        </p>
+      </div>
+      
+      <div class="detail">
+        <p class="data"><span class="label">Phone:</span> <span class="label2" id="phone"></span>
+          <div class="log">
+            <span  class="toggle-password">
+              <i class="fa fa-phone"></i>
+            </span>
+          </div>
+        </p>
+      </div>
+      
+      <div class="detail">
+        <p class="data"><span class="label">Gender:</span> <span class="label2" id="gender"></span>
+          <div class="log">
+            <span  class="toggle-password">
+              <i class="fa fa-gender"></i>
+            </span>
+          </div>
+        </p>
+      </div>
+
+      <div class="detail">
+        <p class="data"><span class="label">Setting:</span>
+          <div class="log">
+            <!-- <span  class="toggle-password">
+              <i class="fa fa-gears"></i>
+            </span> -->
+            <button style="width: fit-content; height: fit-content; border: none;"><img style="width: 30px; height: 30px;"  src="gear.png" alt=""></button>
+          </div>
+        </p>
+      </div>
+      
     </div>
 
     <div class="actions">
@@ -103,6 +208,7 @@
       .then(res => res.json())
       .then(user => {
         document.getElementById("username").innerText = user.username;
+        document.getElementById("username2").innerText = user.username;
         document.getElementById("email").innerText = user.email;
         document.getElementById("phone").innerText = user.phone;
         document.getElementById("gender").innerText = user.gender;

@@ -56,6 +56,7 @@ const pool = new Pool({
     credentials: true                            // Allow cookies to be sent
   }));
 
+  //-------solution for CORS error
   app.set("trust proxy", 1); // trust first proxy
 app.use(session({
     store: new PgSession({
@@ -71,14 +72,14 @@ app.use(session({
       // maxAge: 2 * 60 * 60 * 1000 // 2 hours
 
       // ------- for local testing
-      // secure: process.env.NODE_ENV === 'production',
-      // sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      // maxAge: 2 * 60 * 60 * 1000
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 2 * 60 * 60 * 1000
 
       //-------- for hosting 
-      secure: true,          // ✅ Must be true for HTTPS
-      sameSite: 'none',      // ✅ Required for cross-origin cookies
-      maxAge: 2 * 60 * 60 * 1000 // 2 hours
+      // secure: true,          // ✅ Must be true for HTTPS
+      // sameSite: 'none',      // ✅ Required for cross-origin cookies
+      // maxAge: 2 * 60 * 60 * 1000 // 2 hours
     }
   }));
 
@@ -282,6 +283,50 @@ app.post("/verify-otp", async (req, res) => {
     // alert("Verification successful. You can now login.");
     // res.redirect("/login");
   });
+
+
+  // Update profile route
+app.post('/updateProfile', upload.single('profile_picture'), async (req, res) => {
+    const { username, email, phone, gender, password } = req.body;
+    const userId = req.session.user.id;
+
+    // If a new profile picture is uploaded, get the URL from Cloudinary
+    let profile_picture_url = req.file ? req.file.path : null;
+
+    try {
+        // Update the user profile in the database
+        const query = `
+            UPDATE users 
+            SET 
+                username = $1, 
+                email = $2, 
+                phone = $3, 
+                gender = $4, 
+                password = $5, 
+                profile_picture = $6
+            WHERE id = $7
+            RETURNING *;
+        `;
+
+        const result = await pool.query(query, [username, email, phone, gender, password, profile_picture_url, userId]);
+
+      
+        if (result.rows.length === 0) {
+            return res.status(404).send('User not found');
+        }
+
+        // Update session with new user data (if necessary)
+        req.session.user = result.rows[0];
+
+        res.json({
+            message: 'Profile updated successfully',
+            user: result.rows[0],
+        });
+    } catch (error) {
+        console.error("❌ Error updating profile:", error);
+        res.status(500).send('Server error');
+    }
+});
 
 
   

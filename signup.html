@@ -25,10 +25,10 @@
     }
     .form-container {
       /* background: #adecd3; */
-      background-color: rgba(130, 236, 236, 0.3); ;
+      /* background-color: rgba(130, 236, 236, 0.3); ; */
       padding: 30px 40px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      /* border-radius: 8px; */
+      /* box-shadow: 0 2px 10px rgba(0,0,0,0.1); */
       width: 300px;
       align-items: center;
     }
@@ -50,6 +50,28 @@
       border-radius: 10px;
       box-shadow: 0 0px 10px rgba(0,0,0,0.2);
     }
+
+    .gender-box {
+      width: 100%;
+      padding: 15px 10px;
+      /* padding-left: 0px; */
+      margin: 10px 0 20px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0px 10px rgba(0,0,0,0.2);
+    }
+    .container{
+      position: relative;
+    }
+    .icon {
+      position: absolute;
+      top: 50%;
+      left: 10px;
+      transform: translateY(-50%);
+      color: #000000;
+    }
+    
     .password-container {
       position: relative;
     }
@@ -64,7 +86,7 @@
     button {
       width: 100%;
       padding: 15px;
-      background: #28a745;
+      background: #24D0D6;
       color: white;
       border: none;
       border-radius: 10px;
@@ -73,14 +95,14 @@
       margin: 10px 0 20px;
     }
     button:hover {
-      background: #218838;
+      background: #20b2b7;
     }
     p {
       text-align: center;
       margin-top: 15px;
     }
     a {
-      color: #28a745;
+      color: #1270B0;
       text-decoration: none;
     }
     a:hover {
@@ -107,8 +129,10 @@
     label{
         padding: 10px;
         font-size: 10px;
-        color: #024c12;
+        color: #000000;
         text-align: center;
+        font-weight: bold;
+        
     }
     .mask{
         position: fixed;    
@@ -119,23 +143,123 @@
         height:150px;
     }
 
+    .log-details {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .log-details h2{
+        color: #295153;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    .log-details p{
+        color: #000000;
+        font-size: 11px;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    .background-image {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -1; /* Puts it behind everything */
+      width: 50vw;  /* Or set specific width/height */
+      height: 50vh;
+      object-fit: cover;
+      opacity: 1;  /* Optional: Make it faint */
+    }
+    /* label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 16px;
+} */
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .checkbox-label input {
+      margin-right: 10px;
+    }
+    .checkbox-label span {
+      font-size: 14px;
+      color: #555;
+    }
+    @media (max-width: 600px) {
+      .form-container {
+        width: 90%;
+        padding: 20px;
+      }
+      .background-image {
+        width: 50vw; /* Full width on small screens */
+        height: auto; /* Maintain aspect ratio */
+      }
+    }
+
+    .terms {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      /* margin-top: 10px; */
+    }
+    .terms label {
+      font-size: 12px;
+      color: #000000;
+      text-align: center;
+      font-weight: bold;
+    }
+
+
   </style>
 </head>
 <body>
   <img class="mask" src="mask.png" alt="">
+  <img src="necktrans.png" class="background-image" alt="Background">
   <div class="form-container">
     <img src="calicare logo.png" alt="Logo" class="logo">
-    <h2>Welcome Onboard</h2>
-    <label style="font-size: 10px; font-weight: bold; color: #024c12;" for="">PLEASE ENTER YOUR DETAILS</label><br><br>
-    
+    <div class="log-details">
+      <h2>Welcome Onboard!</h2>
+      <p>PLEASE ENTER YOUR DETAILS</p>
+    </div>
+
     <form id="signup-form" action="/signup" method="post" enctype="multipart/form-data">
-      <input type="email" name="email" required placeholder="Email" />
-      <input type="text" name="username" required placeholder="Username" />
-      <input type="number" name="phone" required placeholder="Phone" />
-      <select name="gender" required>
-        <option>Male</option>
-        <option>Female</option>
-      </select>
+      <!-- <input type="email" name="email" required placeholder="Email" /> -->
+      <div class="container">
+        <input type="text" name="email" placeholder="Email" required>
+        <span  class="toggle-password">
+          <i class="fa fa-envelope"></i>
+        </span>
+      </div>
+
+
+      <!-- <input type="text" name="username" required placeholder="Username" />
+        -->
+        <div class="container">
+          <input type="text" name="username" placeholder="Full name" required>
+          <span  class="toggle-password">
+            <i class="fa fa-user"></i>
+          </span>
+        </div>
+
+      <!-- <input type="number" name="phone" required placeholder="Phone" /> -->
+      <div class="container">
+        <input type="number" name="phone" placeholder="Phone" required>
+        <span  class="toggle-password">
+          <i class="fa fa-phone"></i>
+        </span>
+      </div>
+      <div class="gender-box">
+        <label style="font-size: 13px; color: grey; padding-left: 0px;" for="">Gender</label>
+        <select name="gender" required>
+          <option>Male</option>
+          <option>Female</option>
+        </select>
+      </div>
+      
 
       <div class="password-container">
         <input
@@ -159,6 +283,16 @@
         <img id="preview-image" alt="Image Preview" />
       </div>
 
+      <label class="checkbox-label">
+        <input type="checkbox" name="remember" />
+        Remember me
+      </label>
+      <div class="terms">
+        <label class="checkbox-label">
+          <input type="checkbox" name="remember" />
+          I agree to the <a href="terms.html" style="color: #1270B0;">Terms and Conditions</a>
+        </label>
+      </div>
       <button type="submit">Sign Up</button>
     </form>
     <p>Already have an account? <a href="/login">Login</a></p>
