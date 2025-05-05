@@ -73,9 +73,14 @@
         }
         #chart {
             width: 100%;
-            height: 400px;
+            height: fit-content;
+            background-color: green;
         }
-        #logo {
+
+        .js-plotly-plot {
+            background-color: transparent;
+            }
+                    #logo {
             width: 120px;
             height: auto;
             display: block;
@@ -152,15 +157,64 @@
             <a href="/logout" style="background-color: red;">Logout</a>
         </div>
         
-      </div>
+    </div>
 
-      <div id="chart"></div>
+    <div id="chart"></div>
 
+    <img id="posture" src="" alt="" >
+
+    <!-- <div style="margin-top: 20px;">
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate">
+        <br><br>
+        <label for="endDate">Start Time:</label>
+        <input type="time" id="startTime">
+        <br><br>
     
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate">
+        <br><br>
+        <label for="endDate">End Time:</label>
+        <input type="time" id="endTime">
+        <br><br> /
+        <div class="btn-below">
+            <button class="btn btn-light-green" onclick="applyDateFilter()">Filter</button>
+            <button class="btn btn-dark-green" onclick="resetFilter()">Reset</button>
+        </div>
+        
+    </div>     -->
+    
+    <!-- <div class="btn-below" style="margin-top: 20px;">
+        <button class="btn btn-dark-green" onclick="exportToExcel()">Export to Excel</button>
+        <button class="btn btn-light-green" onclick="exportToPDF()">Export to PDF</button>
+    </div> -->
 
-   
+      <table style="visibility: hidden;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Sensor (%)</th>
+<!--                 <th>Humidity</th> -->
+                <th>Date</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody id="dataTable" style="visibility: hidden;">
+            <tr><td colspan="4">Loading data...</td></tr>
+        </tbody>
+    </table>
 
-    <!-- <script>
+
+    <script>
+        // fetch('/getProfile')
+        //   .then(res => res.json())
+        //   .then(user => {
+        //     document.getElementById('usernameDisplay').innerText = user.username;
+        //     if (user.profile_picture) {
+        //       document.getElementById('userPhoto').src = '/uploads/' + user.profile_picture;
+        //     }
+        //   });
+
         flatpickr("#startTime", {
             enableTime: true,
             noCalendar: true,
@@ -175,7 +229,7 @@
             time_24hr: true
         });
         
-        function updateTable(data) {
+         function updateTable(data) {
             const tableBody = document.getElementById("dataTable");
             tableBody.innerHTML = "";
 
@@ -184,18 +238,18 @@
                 return;
             }
 
-            data.forEach(row => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td>${row.id}</td>
-                    <td>${row.temperature}</td>
-                    <td>${row.date}</td>
-                    <td>${row.time}</td>
-                `;
-                tableBody.appendChild(tr);
-            });
+            // data.forEach(row => {
+            //     const tr = document.createElement("tr");
+            //     tr.innerHTML = `
+            //         <td>${row.id}</td>
+            //         <td>${row.temperature}</td>
+            //         <td>${row.date}</td>
+            //         <td>${row.time}</td>
+            //     `;
+            //     tableBody.appendChild(tr);
+            // });
         }
-
+        
         function updateGraph(data) {
             const latestData = data.slice(0, 9).reverse(); // Get the 9 most recent entries & reverse order for correct plotting
 
@@ -204,46 +258,15 @@
 
             const temperature = temperatureArray[temperatureArray.length - 1];
 
-            // Plotly.react('chart', [{
-            //     x: timeArray,
-            //     y: temperatureArray,
-            //     type: 'scatter',
-            //     mode: 'lines+markers',
-            //     name: 'Temperature (°C)',
-            //     line: { color: 'red' }
-            // }], {
-            //     title: 'Real-time Temperature Graph',
-            //     xaxis: { title: 'Time' },
-            //     yaxis: { title: 'Temperature (°C)' }
-            // });
-
-
-            //  Plotly.react('chart', [{
-            //     type: 'indicator',
-            //     mode: 'gauge+number',
-            //     value: temperature, // Use a single value, not an array
-            //     title: { text: 'Temperature (°C)' },
-            //     gauge: {
-            //         axis: { range: [null, 100] }, // Adjust range as needed
-            //         bar: { color: 'red' },
-            //         steps: [
-            //             { range: [0, 30], color: '#d4f4fa' },
-            //             { range: [30, 60], color: '#f4e842' },
-            //             { range: [60, 100], color: '#f45b69' }
-            //         ]
-            //     }
-            // }], {
-            //     title: 'Current Temperature'
-            // });
-
-
-
             let barColor = 'red';
             if (temperature > 80) {
                 barColor = 'green';
+                document.getElementById('posture').src = 'mangreen.png';
             } else if (temperature > 50) {
                 barColor = 'yellow';
+                document.getElementById('posture').src = 'mangreen.png';
             }
+            document.getElementById('posture').src = 'mangred.png';
 
             Plotly.react('chart', [{
                 type: 'indicator',
@@ -265,6 +288,8 @@
             }], {
                 title: ' ',
                 margin: { t: 50, b: 0, l: 0, r: 0 }
+                // paper_bgcolor: 'rgba(0,0,0,0)',  // <-- Makes outer background transparent
+                // plot_bgcolor: 'rgba(0,0,0,0)'    // <-- Makes inner plot area transparent
             });
         }
 
@@ -280,156 +305,9 @@
 
         fetchData();
 
-        // WebSocket Setup
-        const protocol = window.location.protocol === "https:" ? "wss" : "ws";
-        const socket = new WebSocket(`${protocol}://${window.location.host}`);
-
-
-        socket.onmessage = function () {
-            fetchData();
-        };
-
-        socket.onopen = () => console.log("Connected to WebSocket");
-        socket.onclose = () => console.log("Disconnected from WebSocket");
-        socket.onerror = (error) => {
-            console.error("WebSocket Error:", error);
-            setInterval(fetchData, 5000); // Poll every 5 seconds if WebSocket fails
-        };
-
-        function exportToExcel() {
-            const table = document.getElementById('dataTable');
-            const wb = XLSX.utils.table_to_book(table, { sheet: "Data" });
-            XLSX.writeFile(wb, 'EMGData.xlsx');
-        }
-
-        function exportToPDF() {
-            const table = document.querySelector("table");
-            html2canvas(table).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jspdf.jsPDF();
-                const imgProps = pdf.getImageProperties(imgData);
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        
-                pdf.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
-                pdf.save('EMGData.pdf');
-            });
-        }
-
-        function applyDateFilter() {
-            const start = document.getElementById("startDate").value;
-            const startTime = document.getElementById("startTime").value || "00:00:00";
-            const end = document.getElementById("endDate").value;
-            const endTime = document.getElementById("endTime").value || "23:59:59";
-
-            if (!start || !end) {
-                alert("Please select both start and end dates .");
-                return;
-            }
-
-            // fetch(`/getDataByDate?start=${start}&end=${end}`)
-            fetch(`/getDataByDate?start=${start} ${startTime}&end=${end} ${endTime}`)
-                .then(response => response.json())
-                .then(data => {
-                    updateTable(data);
-                    updateGraph(data);
-                })
-                .catch(error => console.error('Error filtering data:', error));
-        }
-
-        function resetFilter() {
-            document.getElementById("startDate").value = '';
-            document.getElementById("endDate").value = '';
-            fetchData(); // Load all data again
-        }
-
-    </script> -->
-
-    <script>
-        // fetch('/getProfile')
-        //   .then(res => res.json())
-        //   .then(user => {
-        //     document.getElementById('usernameDisplay').innerText = user.username;
-        //     if (user.profile_picture) {
-        //       document.getElementById('userPhoto').src = '/uploads/' + user.profile_picture;
-        //     }
-        //   });
-
-         function updateGraph(data) {
-            const latestData = data.slice(0, 9).reverse(); // Get the 9 most recent entries & reverse order for correct plotting
-
-            let timeArray = latestData.map(row => `${row.date} ${row.time}`);
-            let temperatureArray = latestData.map(row => row.temperature);
-
-            const temperature = temperatureArray[temperatureArray.length - 1];
-
-            // Plotly.react('chart', [{
-            //     x: timeArray,
-            //     y: temperatureArray,
-            //     type: 'scatter',
-            //     mode: 'lines+markers',
-            //     name: 'Temperature (°C)',
-            //     line: { color: 'red' }
-            // }], {
-            //     title: 'Real-time Temperature Graph',
-            //     xaxis: { title: 'Time' },
-            //     yaxis: { title: 'Temperature (°C)' }
-            // });
-
-
-            //  Plotly.react('chart', [{
-            //     type: 'indicator',
-            //     mode: 'gauge+number',
-            //     value: temperature, // Use a single value, not an array
-            //     title: { text: 'Temperature (°C)' },
-            //     gauge: {
-            //         axis: { range: [null, 100] }, // Adjust range as needed
-            //         bar: { color: 'red' },
-            //         steps: [
-            //             { range: [0, 30], color: '#d4f4fa' },
-            //             { range: [30, 60], color: '#f4e842' },
-            //             { range: [60, 100], color: '#f45b69' }
-            //         ]
-            //     }
-            // }], {
-            //     title: 'Current Temperature'
-            // });
-
-
-
-            let barColor = 'red';
-            if (temperature > 80) {
-                barColor = 'green';
-            } else if (temperature > 50) {
-                barColor = 'yellow';
-            }
-
-            Plotly.react('chart', [{
-                type: 'indicator',
-                mode: 'gauge+number',
-                value: temperature,
-                title: { text: 'Live EMG Sensor value (%)' },
-                gauge: {
-                    axis: { range: [0, 100] }, // Full gauge range
-                    bar: { color: barColor },
-                    steps: [
-                        { range: [0, 100], color: '#e0e0e0' } // Grey background for entire gauge
-                    ],
-                    // Full circle style
-                    shape: "angular",
-                    startangle: 0,
-                    endangle: 360
-                },
-                domain: { x: [0, 1], y: [0, 1] }
-            }], {
-                title: ' ',
-                margin: { t: 50, b: 0, l: 0, r: 0 }
-            });
-        }
-
-
-        fetch('/getProfile', {
         // fetch('https://calicareapp.onrender.com/getProfile', {
+        fetch('/getProfile', {
+        
             method: 'GET',
             credentials: 'include'  // <-- This tells the browser to send cookies
             })
@@ -447,6 +325,22 @@
             .catch(err => {
             console.error("Profile fetch error:", err);
             });
+
+             // WebSocket Setup
+        const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+        const socket = new WebSocket(`${protocol}://${window.location.host}`);
+
+
+        socket.onmessage = function () {
+            fetchData();
+        };
+
+        socket.onopen = () => console.log("Connected to WebSocket");
+        socket.onclose = () => console.log("Disconnected from WebSocket");
+        socket.onerror = (error) => {
+            console.error("WebSocket Error:", error);
+            setInterval(fetchData, 5000); // Poll every 5 seconds if WebSocket fails
+        };
 
       </script>
 
