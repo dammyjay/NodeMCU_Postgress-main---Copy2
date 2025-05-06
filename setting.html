@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Settings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="calicare logo.png" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f3fbfb;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .settings-card {
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      /* background: white; */
+      /* border-radius: 10px; */
+      /* box-shadow: 0 0px 15px rgba(0,0,0,0.2); */
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #024c12;
+    }
+
+    .setting-item2 {
+      /* display: flex; */
+      justify-content: space-between;
+      align-items: center;
+      margin: 15px 0;
+      padding: 10px 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 15px 0;
+      padding: 5px 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+
+    .setting-label {
+      font-weight: bold;
+      color: #24D0D6;
+      font-size: 14px;
+    }
+    .setting-label2 {
+      font-weight: bold;
+      color: #9a9a9a;
+      font-size: 12px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 40px;
+      height: 20px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0;
+      right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 12px; width: 12px;
+      left: 3px; bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #28a745;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .device-status {
+      width: 20px;
+      height: 20px;
+    }
+
+    select {
+      padding: 6px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .btn {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-export {
+      background-color: #ffffff;
+      color: rgb(20, 20, 20);
+      padding: 5px 10px;
+      border: none;
+      box-shadow: 0 0px 10px rgba(0,0,0,0.2);
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-learn {
+      background-color: #007bff;
+      color: white;
+    }
+    .node-status {
+      font-size: 10px;
+      color: #024c12;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .icon-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    /* .setting-label-group {
+      display: flex;
+      flex-direction: column;
+    } */
+    .setting-label-group {
+  display: flex;
+  align-items: start; /* vertical alignment */
+  flex-direction: column;
+  line-height: 0.0; /* reduce vertical spacing */
+}
+
+  </style>
+</head>
+<body>
+  <div class="settings-card">
+    <div class="top1">
+        <img src="calicare logo.png" alt="logo" width="100" height="100" style="margin-bottom: 20px;"/>
+        <h2>Settings</h2>
+    </div>
+    
+
+    <div class="setting-item2">
+      <!-- <span class="setting-label">Device Status</span> -->
+      
+      <img id="deviceStatus" class="device-status" src="offline.png" alt="status"/>
+      <p id="node-status" class="node-status"></p>
+    </div>
+
+    <div class="setting-item">
+        <div class="icon-label">
+            <img src="bell.png" alt="" width="20" height="20">
+            <div class="setting-label-group">
+                <p class="setting-label">In-App Notifications</p>
+                <p class="setting-label2">Receive notifications</p>
+            </div>   
+        </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="notifToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-item">
+      <!-- <span class="setting-label">Reminder Alerts</span> -->
+      <div class="icon-label">
+            <img src="reminder.png" alt="" width="20" height="20">
+            <div class="setting-label-group">
+                <p class="setting-label">Reminder Alerts</p>
+                <p class="setting-label2">Set reminders</p>
+            </div>   
+        </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="reminderToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-item">
+      <div class="icon-label">
+            <img src="Darkmode.png" alt="" width="20" height="20">
+            <div class="setting-label-group">
+                <p class="setting-label">Dark Mode</p>
+                <p class="setting-label2">Set the Visuals of the App</p>
+            </div>   
+        </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="darkToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-item">
+      <!-- <span class="setting-label">Language</span> -->
+      <div class="icon-label">
+            <img src="language.png" alt="" width="20" height="20">
+            <div class="setting-label-group">
+                <p class="setting-label">Language</p>
+                <p class="setting-label2">Set your prefferd language</p>
+            </div>   
+        </div>
+      <select id="languageSelect">
+        <option value="en" selected>English</option>
+        <option value="fr">French</option>
+        <option value="yo">Yoruba</option>
+        <option value="ha">Hausa</option>
+        <option value="ig">Igbo</option>
+      </select>
+    </div>
+
+    <div class="setting-item">
+      <div class="icon-label">
+            <img src="connect.png" alt="" width="20" height="20">
+            <div class="setting-label-group">
+                <p class="setting-label">Device Connection</p>
+                <p class="setting-label2">Set your preffered language</p>
+            </div>   
+        </div>
+      <button onclick="connectDevice()" style="padding: 6px 12px; border-radius: 5px; background-color: #024c12; color: white;">Connect</button>
+    </div>
+
+     <div class="setting-item">
+      <div class="icon-label">
+            <img src="export.png" alt="" width="20" height="20">
+            <div class="setting-label-group">
+                <p class="setting-label">Export Data</p>
+                <p class="setting-label2">Share you data</p>
+            </div>   
+        </div>
+      <button class="btn-export" onclick="window.location.href='/view-data'">Export health Data</button>
+    </div>
+
+    <div class="setting-item">
+      <div class="icon-label">
+            <img src="export.png" alt="" width="20" height="20">
+            <div class="setting-label-group">
+                <p class="setting-label">About Calicare</p>
+                <p class="setting-label2">Learn more about us</p>
+            </div>   
+        </div>
+      <button class="btn-export" onclick="window.location.href='/learn-more'">Learn More</button>
+    </div>
+
+  </div>
+
+  <script>
+    // Toggle persistence (could be tied to user settings API in real app)
+    document.getElementById("notifToggle").checked = localStorage.getItem("notif") === "true";
+    document.getElementById("reminderToggle").checked = localStorage.getItem("reminder") === "true";
+    document.getElementById("darkToggle").checked = localStorage.getItem("darkmode") === "true";
+    document.getElementById("languageSelect").value = localStorage.getItem("lang") || "en";
+
+    // Update storage when toggled
+    document.getElementById("notifToggle").onchange = e => localStorage.setItem("notif", e.target.checked);
+    document.getElementById("reminderToggle").onchange = e => localStorage.setItem("reminder", e.target.checked);
+    document.getElementById("darkToggle").onchange = e => localStorage.setItem("darkmode", e.target.checked);
+    document.getElementById("languageSelect").onchange = e => localStorage.setItem("lang", e.target.value);
+
+    // Simulated API check for NodeMCU (to be replaced with real API)
+    function checkDeviceStatus() {
+      fetch("/nodemcu-status")
+        .then(res => res.json())
+        .then(data => {
+          const statusImg = document.getElementById("deviceStatus");
+          statusImg.src = data.online ? "online.png" : "offline.png";
+        //   document.getElementById("deviceStatus");innerText = data.online ? "Online" : "Offline";
+          document.getElementById("node-status").innerText = data.online ? "Connected" : "Disconnected";
+        })
+        .catch(() => {
+          document.getElementById("deviceStatus").src = "offline.png";
+            document.getElementById("node-status").innerText = "Disconnected";
+        });
+    }
+
+    // Check on load
+    checkDeviceStatus();
+
+    // Device connection (Bluetooth simulation)
+    async function connectDevice() {
+      try {
+        const device = await navigator.bluetooth.requestDevice({
+          acceptAllDevices: true
+        });
+        alert("Connected to: " + device.name);
+      } catch (err) {
+        alert("Bluetooth connection failed: " + err.message);
+      }
+    }
+  </script>
+</body>
+</html>
+

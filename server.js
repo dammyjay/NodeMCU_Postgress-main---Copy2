@@ -507,7 +507,7 @@ wss.on("connection", (ws) => {
         console.log("Client disconnected");
     });
 });
-
+let nodeMCULastSeen = null;
 // Insert data into PostgreSQL
 app.post("/postData", express.urlencoded({ extended: true }), async (req, res) => {
     console.log("Received data:", req.body);
@@ -524,6 +524,8 @@ app.post("/postData", express.urlencoded({ extended: true }), async (req, res) =
         );
 
         console.log("Inserted data:", result.rows[0]);
+        
+        nodeMCULastSeen = now;
 
         // Notify WebSocket clients
         const newData = JSON.stringify(result.rows[0]);
@@ -538,9 +540,47 @@ app.post("/postData", express.urlencoded({ extended: true }), async (req, res) =
         console.error("Error inserting data:", error);
         res.status(500).json({ error: "Database insertion failed" });
     }
+    
+  nodeMCULastSeen = new Date(); // Update last seen time
+  res.send('Data received');
+
 });
 
+// app.get('/nodemcu-status', (req, res) => {
+//     if (!nodeMCULastSeen) {
+//         return res.json({ online: false, message: 'No data received yet' });
+//     }
+
+//     const now = new Date();
+//     const diffInSeconds = (now - nodeMCULastSeen) / 1000;
+
+//     if (diffInSeconds < 10) { // if data received in last 10 seconds, consider it online
+//         res.json({ online: true, lastSeen: nodeMCULastSeen });
+//     } else {
+//         res.json({ online: false, lastSeen: nodeMCULastSeen });
+//     }
+// });
+
+
 // Retrieve all data in descending order
+
+app.get('/nodemcu-status', (req, res) => {
+  if (!nodeMCULastSeen) {
+    return res.json({ online: false, message: 'No data received yet' });
+  }
+
+  const now = new Date();
+  const diffInSeconds = (now - nodeMCULastSeen) / 1000;
+
+  const isOnline = diffInSeconds < 10; // 10s threshold
+  res.json({
+    online: isOnline,
+    lastSeen: nodeMCULastSeen,
+    message: isOnline ? 'Device is online' : 'Device is offline',
+  });
+});
+
+
 app.get("/getAllData", async (req, res) => {
     try {
         const result = await pool.query("SELECT * FROM nodemcu_table ORDER BY id DESC");

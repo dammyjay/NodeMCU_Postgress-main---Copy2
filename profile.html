@@ -22,10 +22,7 @@
     }
 
     .profile-card {
-      /* background-color: #ffffff; */
       padding: 30px;
-      /* border-radius: 12px; */
-      /* box-shadow: 0 4px 12px rgba(0,0,0,0.1); */
       width: 90%;
       max-width: 400px;
       text-align: center;
@@ -97,7 +94,6 @@
       background-color: white;
       width: 100%;
       padding: 15px 10px;
-      /* padding-left: 0px; */
       margin: 10px 0 20px;
       border: 1px solid #ccc;
       background-color: #fff;
@@ -118,7 +114,6 @@
       justify-content: space-between;  /* Aligns the icon to the right */
       align-items: center; /* Centers the icon vertically */
       margin-bottom: 10px;
-      /* margin-top: 10px; */
     }
     .icono{
       color: white;
@@ -136,7 +131,6 @@
   <div class="profile-card">
     <div class="edit">
       <h3>Profile</h3>
-    <!-- <a href="editprofile.html" class="btn btn-green">Edit Profile</a> -->
      <a class="icono" href="editprofile.html" ><i class="fa fa-pencil"></i></a>
   </div>
     <img id="profilePic" class="profile-pic" src="default-avatar.png" alt="Profile Picture" />
@@ -190,7 +184,7 @@
             <!-- <span  class="toggle-password">
               <i class="fa fa-gears"></i>
             </span> -->
-            <button style="width: fit-content; height: fit-content; border: none;"><img style="width: 30px; height: 30px;"  src="gear.png" alt=""></button>
+            <a style="cursor: pointer;" href="setting.html"><button style="width: fit-content; height: fit-content; border: none;"><img style="width: 30px; height: 30px; cursor: pointer;"  src="gear.png" alt=""></button></a>
           </div>
         </p>
       </div>
