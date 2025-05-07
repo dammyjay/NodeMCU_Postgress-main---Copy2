@@ -1,0 +1,41 @@
+body.dark-mode  {
+    background-color: #121212;
+    color: #fff;
+}
+
+body.dark-mode .setting-item {
+    background-color: #1e1e1e;
+    border-color: #333;
+}
+
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+body.dark-mode .detail {
+    background-color: #1e1e1e;
+    border-color: #333;
+}
+
+body.dark-mode .label {
+    color: #4DD0E1;
+}
+
+body.dark-mode .label2 {
+    color: #e0e0e0;
+}
+
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4 {
+    color: #ffffff;
+}
+
+body.dark-mode .btn-green {
+    background-color: #2e7d32;
+}
+
+body.dark-mode .btn-red {
+    background-color: #d32f2f;
+}

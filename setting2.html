@@ -219,7 +219,23 @@
         font-size: 12px;
       }
     }
-    
+
+    .dark-mode {
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    .dark-mode .setting-item,
+    .dark-mode .setting-item2 {
+      background-color: #1e1e1e;
+      border-color: #333;
+    }
+
+    .dark-mode .setting-label,
+    .dark-mode .setting-label2 {
+      color: #ffffff;
+    }
+
   </style>
 </head>
 <body>
@@ -295,6 +311,7 @@
         <option value="yo">Yoruba</option>
         <option value="ha">Hausa</option>
         <option value="ig">Igbo</option>
+        <option value="zh">Chinese</option>
       </select>
     </div>
 
@@ -381,6 +398,179 @@
     document.getElementById('goBack').addEventListener('click', () => {
       window.history.back();
     });
+
+    // Apply dark mode on page load
+if (localStorage.getItem("darkmode") === "true") {
+  document.body.classList.add("dark-mode");
+}
+
+    // Toggle dark mode on change
+    document.getElementById("darkToggle").onchange = e => {
+      localStorage.setItem("darkmode", e.target.checked);
+      document.body.classList.toggle("dark-mode", e.target.checked);
+    };
+
+    // Toggle dark mode on change
+    document.getElementById("darkToggle").onchange = e => {
+      localStorage.setItem("darkmode", e.target.checked);
+      document.body.classList.toggle("dark-mode", e.target.checked);
+    };
+
+    const languageMap = {
+  en: {
+    settings: "Settings",
+    notifications: "In-App Notifications",
+    notifyHelp: "Receive notifications",
+    reminder: "Reminder Alerts",
+    reminderHelp: "Set reminders",
+    dark: "Dark Mode",
+    darkHelp: "Set the Visuals of the App",
+    lang: "Language",
+    langHelp: "Set your preferred language",
+    connect: "Device Connection",
+    connectHelp: "Set your preferred language",
+    export: "Export Data",
+    exportHelp: "Share your data",
+    about: "About Calicare",
+    aboutHelp: "Learn more about us",
+    exportBtn: "Export health Data",
+    aboutBtn: "Learn More"
+  },
+  fr: {
+    settings: "Paramètres",
+    notifications: "Notifications intégrées",
+    notifyHelp: "Recevoir des notifications",
+    reminder: "Alertes de rappel",
+    reminderHelp: "Définir des rappels",
+    dark: "Mode sombre",
+    darkHelp: "Définir l'apparence de l'application",
+    lang: "Langue",
+    langHelp: "Définir votre langue préférée",
+    connect: "Connexion de l'appareil",
+    connectHelp: "Définir votre langue préférée",
+    export: "Exporter les données",
+    exportHelp: "Partager vos données",
+    about: "À propos de Calicare",
+    aboutHelp: "En savoir plus sur nous",
+    exportBtn: "Exporter les données",
+    aboutBtn: "En savoir plus"
+  },
+  // Add Yoruba, Hausa, Igbo similarly...
+
+  zh: {
+  settings: "设置",
+  notifications: "内置通知",
+  notifyHelp: "接收通知提醒",
+  reminder: "提醒警报",
+  reminderHelp: "设置提醒",
+  dark: "深色模式",
+  darkHelp: "设置应用外观",
+  lang: "语言",
+  langHelp: "设置您的首选语言",
+  connect: "设备连接",
+  connectHelp: "连接您的设备",
+  export: "导出数据",
+  exportHelp: "共享您的数据",
+  about: "关于 Calicare",
+  aboutHelp: "了解更多信息",
+  exportBtn: "导出数据",
+  aboutBtn: "了解更多"
+}
+,
+  yo: {
+    settings: "Eto",
+    notifications: "Ifohunsafẹfẹ inu",
+    notifyHelp: "Gba awọn ifitonileti",
+    reminder: "Ikilọ Ikilọ",
+    reminderHelp: "Ṣeto awọn ikilọ",
+    dark: "Ipo Dudu",
+    darkHelp: "Ṣeto awọn iwo ti ohun elo",
+    lang: "Ede",
+    langHelp: "Ṣeto ede ti o fẹ",
+    connect: "Asopọ Ẹrọ",
+    connectHelp: "Ṣeto asopọ ẹrọ rẹ",
+    export: "Gbejade Data",
+    exportHelp: "Pin data rẹ",
+    about: "Nipa Calicare",
+    aboutHelp: "Kọ ẹkọ diẹ sii nipa wa",
+    exportBtn: "Gbejade data ilera",
+    aboutBtn: "Kọ ẹkọ diẹ sii"
+  },
+  ha: {
+    settings: "Saitin",
+    notifications: "Sanarwa na ciki",
+    notifyHelp: "Karɓi sanarwa",
+    reminder: "Tuna sanarwa",
+    reminderHelp: "Saita tunatarwa",
+    dark: "Yanayin duhu",
+    darkHelp: "Saita kyan gani na aikace-aikacen",
+    lang: "Harshe",
+    langHelp: "Saita yaren da kake so",
+    connect: "Haɗin Na'ura",
+    connectHelp: "Saita haɗin na'urarka",
+    export: "Fitar da Bayanai",
+    exportHelp: "Raba bayananka",
+    about: "Game da Calicare",
+    aboutHelp: "Koyi ƙarin game da mu",
+    exportBtn: "Fitar da bayanan lafiya",
+    aboutBtn: "Koyi ƙarin"
+  },
+  ig:{
+      settings:"Ntọala", 
+      notifications:"Nkwupụta n'ime", 
+      notifyHelp:"Nnata nkwupụta", 
+      reminder:"Nkwupụta ncheta", 
+      reminderHelp:"Tọọ ncheta", 
+      dark:"Oge ọchịchịrị", 
+      darkHelp:"Tọọ anya nke ngwa", 
+      lang:"Asụsụ", 
+      langHelp:"Tọọ asụsụ ị chọrọ", 
+      connect:"Njikọ Ngwaọrụ", 
+      connectHelp:"Tọọ njikọ ngwaọrụ gị",
+
+}
+    }
+
+
+// Function to apply translations
+function applyLanguage(lang) {
+  const text = languageMap[lang];
+  if (!text) return;
+
+  document.querySelector("h2").innerText = text.settings;
+  document.querySelectorAll(".setting-item")[0].querySelector(".setting-label").innerText = text.notifications;
+  document.querySelectorAll(".setting-item")[0].querySelector(".setting-label2").innerText = text.notifyHelp;
+
+  document.querySelectorAll(".setting-item")[1].querySelector(".setting-label").innerText = text.reminder;
+  document.querySelectorAll(".setting-item")[1].querySelector(".setting-label2").innerText = text.reminderHelp;
+
+  document.querySelectorAll(".setting-item")[2].querySelector(".setting-label").innerText = text.dark;
+  document.querySelectorAll(".setting-item")[2].querySelector(".setting-label2").innerText = text.darkHelp;
+
+  document.querySelectorAll(".setting-item")[3].querySelector(".setting-label").innerText = text.lang;
+  document.querySelectorAll(".setting-item")[3].querySelector(".setting-label2").innerText = text.langHelp;
+
+  document.querySelectorAll(".setting-item")[4].querySelector(".setting-label").innerText = text.connect;
+  document.querySelectorAll(".setting-item")[4].querySelector(".setting-label2").innerText = text.connectHelp;
+
+  document.querySelectorAll(".setting-item")[5].querySelector(".setting-label").innerText = text.export;
+  document.querySelectorAll(".setting-item")[5].querySelector(".setting-label2").innerText = text.exportHelp;
+  document.querySelectorAll(".setting-item")[5].querySelector("button").innerText = text.exportBtn;
+
+  document.querySelectorAll(".setting-item")[6].querySelector(".setting-label").innerText = text.about;
+  document.querySelectorAll(".setting-item")[6].querySelector(".setting-label2").innerText = text.aboutHelp;
+  document.querySelectorAll(".setting-item")[6].querySelector("button").innerText = text.aboutBtn;
+}
+
+const lang = localStorage.getItem("lang") || "en";
+applyLanguage(lang);
+
+document.getElementById("languageSelect").onchange = e => {
+  const selectedLang = e.target.value;
+  localStorage.setItem("lang", selectedLang);
+  applyLanguage(selectedLang);
+};
+
 
   </script>
 </body>

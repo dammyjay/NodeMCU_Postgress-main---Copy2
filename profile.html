@@ -9,6 +9,7 @@
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
 />
+<!-- <link rel="stylesheet" href="main.css"> -->
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -24,7 +25,7 @@
     .profile-card {
       padding: 30px;
       width: 90%;
-      max-width: 400px;
+      /* max-width: 400px; */
       text-align: center;
     }
 
@@ -126,21 +127,21 @@
     }
   </style>
 </head>
-<body>
+<body id="body" class="body2">
   
   <div class="profile-card">
     <div class="edit">
-      <h3>Profile</h3>
+      <h3 data-i18n="profile">Profile</h3>
      <a class="icono" href="editprofile.html" ><i class="fa fa-pencil"></i></a>
   </div>
     <img id="profilePic" class="profile-pic" src="default-avatar.png" alt="Profile Picture" />
-    <h2 id="username">Username</h2>
+    <h2 id="username" data-i18n="username">Username</h2>
 
     <div class="info">
-      <h4>Personal Information</h4>
+      <h4 data-i18n="personalInfo">Personal Information</h4>
       <div class="detail">
       
-        <p class="data"><span class="label">Username:</span> <span class="label2" id="username2"></span> 
+        <p class="data"><span class="label" data-i18n="username" >Username:</span> <span class="label2" id="username2"></span> 
           <div class="log">
             <span  class="toggle-password">
               <i class="fa fa-user"></i>
@@ -184,7 +185,7 @@
             <!-- <span  class="toggle-password">
               <i class="fa fa-gears"></i>
             </span> -->
-            <a style="cursor: pointer;" href="setting.html"><button style="width: fit-content; height: fit-content; border: none;"><img style="width: 30px; height: 30px; cursor: pointer;"  src="gear.png" alt=""></button></a>
+            <a style="cursor: pointer;" href="setting2.html"><button style="width: fit-content; height: fit-content; border: none;"><img style="width: 30px; height: 30px; cursor: pointer;"  src="gear.png" alt=""></button></a>
           </div>
         </p>
       </div>
@@ -197,6 +198,7 @@
     </div>
   </div>
 
+  <script src="app-setting.js"></script>
   <script>
     fetch("/getProfile")
       .then(res => res.json())
