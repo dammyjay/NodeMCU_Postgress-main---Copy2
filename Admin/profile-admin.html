@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/Images/calicare logo.png" type="image/x-icon" />
+  <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+/>
+<link rel="stylesheet" href="main.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: row;
+    }
+
+    .profile-card {
+      margin-left: 200px;
+      padding: 20px;
+      flex: 1;
+      width: 100%;
+      text-align: center;
+    }
+
+    .profile-pic {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      border: 3px solid #28a745;
+    }
+
+    h2 {
+      margin: 10px 0;
+      color: #024c12;
+    }
+
+    .info {
+      text-align: left;
+      margin-top: 20px;
+    }
+
+    .info p {
+      margin: 10px 0;
+      font-size: 15px;
+    }
+
+    .label {
+      font-weight: bold;
+      color: #24D0D6;
+      padding-right: 10px;
+      padding-left: 10px;
+    }
+
+    .label2 {
+      color: #000000;
+      font-weight: bold;
+    }
+
+    .actions {
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .btn-green {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .btn-red {
+      background-color: #e73f07;
+      color: white;
+    }
+    .detail {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: white;
+      width: 100%;
+      padding: 15px 10px;
+      margin: 10px 0 20px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0px 10px rgba(0,0,0,0.2);
+    }
+    .log{
+      display: flex;
+      justify-content: flex-end;  /* Aligns the icon to the right */
+      align-items: center; /* Centers the icon vertically */
+      /* width: 100%; */
+    }
+    .data{
+      width: 100%;
+    }
+    .edit{
+      display: flex;
+      justify-content: space-between;  /* Aligns the icon to the right */
+      align-items: center; /* Centers the icon vertically */
+      margin-bottom: 10px;
+      width: 100%;
+    }
+    .icono{
+      color: white;
+      font-size: 20px;
+      padding-right: 10px;
+      padding-left: 10px;
+      padding: 7px;
+      background-color: #024c12 ;
+      border-radius: 100%;
+    }
+    .mask{
+        position: fixed;    
+        top: 0;
+        left: 0;
+        z-index: -1;
+        width: 100px;
+        height:150px;
+    }
+    .sidebar {
+      width: fit-content;
+      background: #2c3e50;
+      color: white;
+      height: 100vh;
+      position: fixed;
+      padding: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar.hidden {
+      transform: translateX(-100%);
+    }
+
+    .sidebar h2 {
+      color: #ecf0f1;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      margin: 20px 0;
+    }
+
+    .sidebar ul li a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .main {
+      margin-left: 200px;
+      padding: 20px;
+      flex: 1;
+    }
+
+     .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 5px;
+      left: 15px;
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      z-index: 1000;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      overflow-x: auto;
+      display: block;
+      border: none;
+    }
+
+    th, td {
+      /* border: 1px solid #ccc; */
+      padding: 10px 15px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    /* button {
+      padding: 6px 12px;
+      cursor: pointer;
+      background-color: #004d00;
+      color: white;
+      border-radius: 10px;
+    } */
+    .page {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        position: fixed;
+        height: 100%;
+        transform: translateX(-100%);
+        z-index: 999;
+      }
+
+      .sidebar.show {
+        transform: translateX(0);
+      }
+
+      .main {
+        margin-left: 0;
+        margin-top: 20px;
+        padding: 10px;
+      }
+
+      table {
+        font-size: 14px;
+      }
+
+      th, td {
+        padding: 6px;
+      }
+
+      button {
+        padding: 4px 8px;
+        font-size: 12px;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+      .page {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+    }
+    .profile-card {
+      margin-left: 0px;
+      padding: 20px;
+      flex: 1;
+      width: 100%;
+      text-align: center;
+    }
+    }
+
+    @media (max-width: 480px) {
+      th, td {
+        font-size: 12px;
+      }
+
+      img {
+        width: 40px;
+        height: 40px;
+      }
+      .page {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+    }
+    .profile-card {
+      margin-left: 0;
+      padding: 20px;
+      flex: 1;
+      width: 100%;
+    }
+
+    }
+
+  </style>
+</head>
+<body id="body" class="body2">
+    
+  <img class="mask" src="/Images/mask.png" alt="">
+  <button class="menu-toggle" onclick="toggleSidebar()">☰ Menu</button>
+
+    <div class="page">
+        <div id="sidebar" class="sidebar">
+            <h2>Calicare Admin</h2>
+            <ul>
+                <li><a href="/Admin/profile-admin.html"><img id="profilePic" class="profile-pic" src="default-avatar.png" alt="Profile Picture" /></a></li>
+                <li><a href="/Admin/dashboard-admin.html">Dashboard</a></li>
+                <li><a href="/Admin/admin.html">Users</a></li>
+                <li><a href="/Admin/device-admin.html">Devices</a></li>
+                <li><a href="/Admin/setting-admin.html">Settings</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="profile-card">
+            <div class="edit">
+                <h3 data-i18n="profile">Profile</h3>
+                <a class="icono" href="editprofile.html" ><i class="fa fa-pencil"></i></a>
+            </div>
+            <img id="profilePic2" class="profile-pic" src="default-avatar.png" alt="Profile Picture" />
+            <h2 id="username" data-i18n="username">Username</h2>
+
+            <div class="info">
+                <h4 data-i18n="personalInfo">Personal Information</h4>
+                <div class="detail">
+                
+                    <p class="data"><span class="label" data-i18n="username" >Username:</span> <span class="label2" id="username2"></span> 
+                    <div class="log">
+                        <span  class="toggle-password">
+                        <i class="fa fa-user"></i>
+                        </span>
+                    </div>
+                    </p>
+                </div>
+
+                <div class="detail">
+                    <p class="data"><span class="label">Email:</span> <span class="label2" id="email"></span> 
+                    <div class="log">
+                        <span  class="toggle-password">
+                        <i class="fa fa-envelope"></i>
+                        </span>
+                    </div>
+                    </p>
+                </div>
+                
+                <div class="detail">
+                    <p class="data"><span class="label">Phone:</span> <span class="label2" id="phone"></span>
+                    <div class="log">
+                        <span  class="toggle-password">
+                        <i class="fa fa-phone"></i>
+                        </span>
+                    </div>
+                    </p>
+                </div>
+                
+                <div class="detail">
+                    <p class="data"><span class="label">Gender:</span> <span class="label2" id="gender"></span>
+                    <div class="log">
+                        <span  class="toggle-password">
+                        <i class="fa fa-gender"></i>
+                        </span>
+                    </div>
+                    </p>
+                </div>
+
+                <div class="detail">
+                    <p class="data"><span class="label">Setting:</span>
+                    <div class="log">
+                        <!-- <span  class="toggle-password">
+                        <i class="fa fa-gears"></i>
+                        </span> -->
+                        <a style="cursor: pointer;" href="setting2.html"><button style="width: fit-content; height: fit-content; border: none;"><img style="width: 30px; height: 30px; cursor: pointer;"  src="/Images/gear.png" alt=""></button></a>
+                    </div>
+                    </p>
+                </div>
+                
+            </div>
+
+
+        </div>
+    </div>
+
+  <script src="app-setting.js"></script>
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('show');
+    }
+    fetch("/getProfile")
+      .then(res => res.json())
+      .then(user => {
+        document.getElementById("username").innerText = user.username;
+        document.getElementById("username2").innerText = user.username;
+        document.getElementById("email").innerText = user.email;
+        document.getElementById("phone").innerText = user.phone;
+        document.getElementById("gender").innerText = user.gender;
+        if (user.profile_picture) {
+          document.getElementById("profilePic").src = user.profile_picture;
+          document.getElementById("profilePic2").src = user.profile_picture;
+        }
+      })
+      .catch(() => alert("Error loading profile"));
+  </script>
+</body>
+</html>

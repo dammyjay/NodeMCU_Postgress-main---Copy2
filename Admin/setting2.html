@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Settings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/Images/calicare logo.png" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f3fbfb;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .settings-card {
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      /* background: white; */
+      /* border-radius: 10px; */
+      /* box-shadow: 0 0px 15px rgba(0,0,0,0.2); */
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #024c12;
+    }
+
+    .setting-item2 {
+      /* display: flex; */
+      justify-content: space-between;
+      align-items: center;
+      margin: 15px 0;
+      padding: 10px 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 15px 0;
+      padding: 5px 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+
+    .setting-label {
+      font-weight: bold;
+      color: #24D0D6;
+      font-size: 14px;
+    }
+    .setting-label2 {
+      font-weight: bold;
+      color: #9a9a9a;
+      font-size: 12px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 40px;
+      height: 20px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0;
+      right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 12px; width: 12px;
+      left: 3px; bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #28a745;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .device-status {
+      width: 20px;
+      height: 20px;
+    }
+
+    select {
+      padding: 6px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .btn {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-export {
+      background-color: #ffffff;
+      color: rgb(20, 20, 20);
+      padding: 5px 10px;
+      border: none;
+      box-shadow: 0 0px 10px rgba(0,0,0,0.2);
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .btn-learn {
+      background-color: #007bff;
+      color: white;
+    }
+    .node-status {
+      font-size: 10px;
+      color: #024c12;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .icon-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    /* .setting-label-group {
+      display: flex;
+      flex-direction: column;
+    } */
+    .setting-label-group {
+  display: flex;
+  align-items: start; /* vertical alignment */
+  flex-direction: column;
+  line-height: 0.0; /* reduce vertical spacing */
+}
+
+    .top1 {
+      display: flex;
+      justify-content: left;
+      align-items: center;
+      flex-direction: row;
+      gap: 10px;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .settings-card {
+        padding: 20px;
+        width: 90%;
+        max-width: 100%;
+      }
+
+      .setting-item {
+        padding: 10px 15px;
+      }
+      .setting-item2 {
+        padding: 10px 15px;
+      }
+    }
+    @media (max-width: 600px) {
+      .settings-card {
+        padding: 20px;
+        width: 90%;
+        max-width: 100%;
+      }
+
+      .setting-item {
+        padding: 10px 15px;
+      }
+      .setting-item2 {
+        padding: 10px 15px;
+      }
+      .setting-label {
+        font-size: 12px;
+      }
+      .setting-label2 {
+        font-size: 10px;
+      }
+      .node-status {
+        font-size: 8px;
+      }
+      .btn-export {
+        font-size: 12px;
+      }
+      .btn-learn {
+        font-size: 12px;
+      }
+      .btn {
+        font-size: 12px;
+      }
+    }
+
+    .dark-mode {
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    .dark-mode .setting-item,
+    .dark-mode .setting-item2 {
+      background-color: #1e1e1e;
+      border-color: #333;
+    }
+
+    .dark-mode .setting-label,
+    .dark-mode .setting-label2 {
+      color: #ffffff;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="settings-card">
+    <div class="top1">
+        <img id="goBack" src="/Images/Back.png" alt="logo" width="20" height="20"  style="cursor:pointer;"/>
+        <h2>Settings</h2>
+    </div>
+    
+
+    <div class="setting-item2">
+      <!-- <span class="setting-label">Device Status</span> -->
+      
+      <img id="deviceStatus" class="device-status" src="/Images/offline.png" alt="status"/>
+      <p id="node-status" class="node-status"></p>
+    </div>
+
+    <div class="setting-item">
+        <div class="icon-label">
+            <img src="/Images/bell.png" alt="" width="20" height="20">
+            <div class="setting-label-group">
+                <p class="setting-label">In-App Notifications</p>
+                <p class="setting-label2">Receive notifications</p>
+            </div>   
+        </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="notifToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-item">
+      <!-- <span class="setting-label">Reminder Alerts</span> -->
+      <div class="icon-label">
+            <img src="/Images/reminder.png" alt="" width="20" height="20">
+            <div class="setting-label-group">
+                <p class="setting-label">Reminder Alerts</p>
+                <p class="setting-label2">Set reminders</p>
+            </div>   
+        </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="reminderToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-item">
+      <div class="icon-label">
+            <img src="/Images/Darkmode.png" alt="" width="20" height="20">
+            <div class="setting-label-group">
+                <p class="setting-label">Dark Mode</p>
+                <p class="setting-label2">Set the Visuals of the App</p>
+            </div>   
+        </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="darkToggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="setting-item">
+      <!-- <span class="setting-label">Language</span> -->
+      <div class="icon-label">
+            <img src="/Images/language.png" alt="" width="20" height="20">
+            <div class="setting-label-group">
+                <p class="setting-label">Language</p>
+                <p class="setting-label2">Set your prefferd language</p>
+            </div>   
+        </div>
+      <select id="languageSelect">
+        <option value="en" selected>English</option>
+        <option value="fr">French</option>
+        <option value="yo">Yoruba</option>
+        <option value="ha">Hausa</option>
+        <option value="ig">Igbo</option>
+        <option value="zh">Chinese</option>
+      </select>
+    </div>
+
+    <div class="setting-item">
+      <div class="icon-label">
+            <img src="/Images/connect.png" alt="" width="20" height="20">
+            <div class="setting-label-group">
+                <p class="setting-label">Device Connection</p>
+                <p class="setting-label2">Set your preffered language</p>
+            </div>   
+        </div>
+      <button class="btn-export" onclick="connectDevice()" ;">Connect</button>
+    </div>
+
+     <div class="setting-item">
+      <div class="icon-label">
+            <img src="/Images/export.png" alt=""  width="20" height="20">
+            <div class="setting-label-group">
+                <p class="setting-label">Export Data</p>
+                <p class="setting-label2">Share you data</p>
+            </div>   
+        </div>
+      <!-- <button class="btn-export" onclick="window.location.href='/view-data'">Export health Data</button> -->
+        <button class="btn-export" onclick="window.location.href='index.html'">Export health Data</button>
+    </div>
+
+    <div class="setting-item">
+      <div class="icon-label">
+            <img src="/Images/export.png" alt="" width="20" height="20">
+            <div class="setting-label-group">
+                <p class="setting-label">About Calicare</p>
+                <p class="setting-label2">Learn more about us</p>
+            </div>   
+        </div>
+      <button class="btn-export" onclick="window.location.href='/learn-more'">Learn More</button>
+    </div>
+
+  </div>
+
+  <script>
+    // Toggle persistence (could be tied to user settings API in real app)
+    document.getElementById("notifToggle").checked = localStorage.getItem("notif") === "true";
+    document.getElementById("reminderToggle").checked = localStorage.getItem("reminder") === "true";
+    document.getElementById("darkToggle").checked = localStorage.getItem("darkmode") === "true";
+    document.getElementById("languageSelect").value = localStorage.getItem("lang") || "en";
+
+    // Update storage when toggled
+    document.getElementById("notifToggle").onchange = e => localStorage.setItem("notif", e.target.checked);
+    document.getElementById("reminderToggle").onchange = e => localStorage.setItem("reminder", e.target.checked);
+    document.getElementById("darkToggle").onchange = e => localStorage.setItem("darkmode", e.target.checked);
+    document.getElementById("languageSelect").onchange = e => localStorage.setItem("lang", e.target.value);
+
+    // Simulated API check for NodeMCU (to be replaced with real API)
+    function checkDeviceStatus() {
+      fetch("/nodemcu-status")
+        .then(res => res.json())
+        .then(data => {
+          const statusImg = document.getElementById("deviceStatus");
+          statusImg.src = data.online ? "online.png" : "/Images/offline.png";
+        //   document.getElementById("deviceStatus");innerText = data.online ? "Online" : "Offline";
+          document.getElementById("node-status").innerText = data.online ? "Online" : "Offline";
+        })
+        .catch(() => {
+          document.getElementById("deviceStatus").src = "/Images/offline.png";
+            document.getElementById("node-status").innerText = "offline";
+        });
+    }
+
+    // Check on load
+    checkDeviceStatus();
+
+    // Device connection (Bluetooth simulation)
+    async function connectDevice() {
+      try {
+        const device = await navigator.bluetooth.requestDevice({
+          acceptAllDevices: true
+        });
+        alert("Connected to: " + device.name);
+      } catch (err) {
+        alert("Bluetooth connection failed: " + err.message);
+      }
+    }
+
+    document.getElementById('goBack').addEventListener('click', () => {
+      window.history.back();
+    });
+
+    // Apply dark mode on page load
+if (localStorage.getItem("darkmode") === "true") {
+  document.body.classList.add("dark-mode");
+}
+
+    // Toggle dark mode on change
+    document.getElementById("darkToggle").onchange = e => {
+      localStorage.setItem("darkmode", e.target.checked);
+      document.body.classList.toggle("dark-mode", e.target.checked);
+    };
+
+    // Toggle dark mode on change
+    document.getElementById("darkToggle").onchange = e => {
+      localStorage.setItem("darkmode", e.target.checked);
+      document.body.classList.toggle("dark-mode", e.target.checked);
+    };
+
+    const languageMap = {
+  en: {
+    settings: "Settings",
+    notifications: "In-App Notifications",
+    notifyHelp: "Receive notifications",
+    reminder: "Reminder Alerts",
+    reminderHelp: "Set reminders",
+    dark: "Dark Mode",
+    darkHelp: "Set the Visuals of the App",
+    lang: "Language",
+    langHelp: "Set your preferred language",
+    connect: "Device Connection",
+    connectHelp: "Set your preferred language",
+    export: "Export Data",
+    exportHelp: "Share your data",
+    about: "About Calicare",
+    aboutHelp: "Learn more about us",
+    exportBtn: "Export health Data",
+    aboutBtn: "Learn More"
+  },
+  fr: {
+    settings: "Paramètres",
+    notifications: "Notifications intégrées",
+    notifyHelp: "Recevoir des notifications",
+    reminder: "Alertes de rappel",
+    reminderHelp: "Définir des rappels",
+    dark: "Mode sombre",
+    darkHelp: "Définir l'apparence de l'application",
+    lang: "Langue",
+    langHelp: "Définir votre langue préférée",
+    connect: "Connexion de l'appareil",
+    connectHelp: "Définir votre langue préférée",
+    export: "Exporter les données",
+    exportHelp: "Partager vos données",
+    about: "À propos de Calicare",
+    aboutHelp: "En savoir plus sur nous",
+    exportBtn: "Exporter les données",
+    aboutBtn: "En savoir plus"
+  },
+  // Add Yoruba, Hausa, Igbo similarly...
+
+  zh: {
+  settings: "设置",
+  notifications: "内置通知",
+  notifyHelp: "接收通知提醒",
+  reminder: "提醒警报",
+  reminderHelp: "设置提醒",
+  dark: "深色模式",
+  darkHelp: "设置应用外观",
+  lang: "语言",
+  langHelp: "设置您的首选语言",
+  connect: "设备连接",
+  connectHelp: "连接您的设备",
+  export: "导出数据",
+  exportHelp: "共享您的数据",
+  about: "关于 Calicare",
+  aboutHelp: "了解更多信息",
+  exportBtn: "导出数据",
+  aboutBtn: "了解更多"
+}
+,
+  yo: {
+    settings: "Eto",
+    notifications: "Ifohunsafẹfẹ inu",
+    notifyHelp: "Gba awọn ifitonileti",
+    reminder: "Ikilọ Ikilọ",
+    reminderHelp: "Ṣeto awọn ikilọ",
+    dark: "Ipo Dudu",
+    darkHelp: "Ṣeto awọn iwo ti ohun elo",
+    lang: "Ede",
+    langHelp: "Ṣeto ede ti o fẹ",
+    connect: "Asopọ Ẹrọ",
+    connectHelp: "Ṣeto asopọ ẹrọ rẹ",
+    export: "Gbejade Data",
+    exportHelp: "Pin data rẹ",
+    about: "Nipa Calicare",
+    aboutHelp: "Kọ ẹkọ diẹ sii nipa wa",
+    exportBtn: "Gbejade data ilera",
+    aboutBtn: "Kọ ẹkọ diẹ sii"
+  },
+  ha: {
+    settings: "Saitin",
+    notifications: "Sanarwa na ciki",
+    notifyHelp: "Karɓi sanarwa",
+    reminder: "Tuna sanarwa",
+    reminderHelp: "Saita tunatarwa",
+    dark: "Yanayin duhu",
+    darkHelp: "Saita kyan gani na aikace-aikacen",
+    lang: "Harshe",
+    langHelp: "Saita yaren da kake so",
+    connect: "Haɗin Na'ura",
+    connectHelp: "Saita haɗin na'urarka",
+    export: "Fitar da Bayanai",
+    exportHelp: "Raba bayananka",
+    about: "Game da Calicare",
+    aboutHelp: "Koyi ƙarin game da mu",
+    exportBtn: "Fitar da bayanan lafiya",
+    aboutBtn: "Koyi ƙarin"
+  },
+  ig:{
+      settings:"Ntọala", 
+      notifications:"Nkwupụta n'ime", 
+      notifyHelp:"Nnata nkwupụta", 
+      reminder:"Nkwupụta ncheta", 
+      reminderHelp:"Tọọ ncheta", 
+      dark:"Oge ọchịchịrị", 
+      darkHelp:"Tọọ anya nke ngwa", 
+      lang:"Asụsụ", 
+      langHelp:"Tọọ asụsụ ị chọrọ", 
+      connect:"Njikọ Ngwaọrụ", 
+      connectHelp:"Tọọ njikọ ngwaọrụ gị",
+
+}
+    }
+
+
+// Function to apply translations
+function applyLanguage(lang) {
+  const text = languageMap[lang];
+  if (!text) return;
+
+  document.querySelector("h2").innerText = text.settings;
+  document.querySelectorAll(".setting-item")[0].querySelector(".setting-label").innerText = text.notifications;
+  document.querySelectorAll(".setting-item")[0].querySelector(".setting-label2").innerText = text.notifyHelp;
+
+  document.querySelectorAll(".setting-item")[1].querySelector(".setting-label").innerText = text.reminder;
+  document.querySelectorAll(".setting-item")[1].querySelector(".setting-label2").innerText = text.reminderHelp;
+
+  document.querySelectorAll(".setting-item")[2].querySelector(".setting-label").innerText = text.dark;
+  document.querySelectorAll(".setting-item")[2].querySelector(".setting-label2").innerText = text.darkHelp;
+
+  document.querySelectorAll(".setting-item")[3].querySelector(".setting-label").innerText = text.lang;
+  document.querySelectorAll(".setting-item")[3].querySelector(".setting-label2").innerText = text.langHelp;
+
+  document.querySelectorAll(".setting-item")[4].querySelector(".setting-label").innerText = text.connect;
+  document.querySelectorAll(".setting-item")[4].querySelector(".setting-label2").innerText = text.connectHelp;
+
+  document.querySelectorAll(".setting-item")[5].querySelector(".setting-label").innerText = text.export;
+  document.querySelectorAll(".setting-item")[5].querySelector(".setting-label2").innerText = text.exportHelp;
+  document.querySelectorAll(".setting-item")[5].querySelector("button").innerText = text.exportBtn;
+
+  document.querySelectorAll(".setting-item")[6].querySelector(".setting-label").innerText = text.about;
+  document.querySelectorAll(".setting-item")[6].querySelector(".setting-label2").innerText = text.aboutHelp;
+  document.querySelectorAll(".setting-item")[6].querySelector("button").innerText = text.aboutBtn;
+}
+
+const lang = localStorage.getItem("lang") || "en";
+applyLanguage(lang);
+
+document.getElementById("languageSelect").onchange = e => {
+  const selectedLang = e.target.value;
+  localStorage.setItem("lang", selectedLang);
+  applyLanguage(selectedLang);
+};
+
+
+  </script>
+</body>
+</html>
+
