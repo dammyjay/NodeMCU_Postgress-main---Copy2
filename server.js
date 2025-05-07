@@ -120,18 +120,69 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'login.html'));
 });
 
-app.post("/login", async (req, res) => {
-    const { email, password } = req.body;
-    const result = await pool.query("SELECT * FROM users WHERE email = $1 AND password = $2", [email, password]);
+// app.post("/login", async (req, res) => {
+//     const { email, password } = req.body;
+//     const result = await pool.query("SELECT * FROM users WHERE email = $1 AND password = $2", [email, password]);
   
-    if (result.rows.length === 0) return res.send("Invalid credentials");
-  
-    req.session.user = result.rows[0];
-    // req.session.user = { id: user.id, username: user.username }; // Must set this
+//     if (email === "admin@calicare.com" && password === "Admin123") {
+//       req.session.user = {
+//         email,
+//         role: "admin",
+//       };
+//       return res.redirect("admin.html");
+//   }
 
-    
-    res.redirect("/dashboard");
-  });
+//     if (result.rows.length === 0) return res.send("Invalid credentials");
+  
+//     req.session.user = result.rows[0];
+//     // req.session.user = { id: user.id, username: user.username }; // Must set this
+
+//     res.redirect("/dashboard");
+//   });
+
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Shortcut for hardcoded admin
+    if (email === "admin@calicare.com" && password === "Admin123") {
+      req.session.user = {
+        email,
+        role: "admin",
+      };
+      return res.redirect("/admin.html");
+    }
+
+    // Query database for user
+    const result = await pool.query(
+      "SELECT * FROM users WHERE email = $1 AND password = $2",
+      [email, password]
+    );
+
+    // If no user found
+    if (result.rows.length === 0) {
+      return res.send("Invalid credentials");
+    }
+
+    const user = result.rows[0];
+
+    // Save to session
+    req.session.user = user;
+
+    // Redirect based on role
+    if (user.role === "admin") {
+      return res.redirect("/admin.html");
+    } else if (user.role === "user") {
+      return res.redirect("/dashboard");
+    } else {
+      return res.send("Unknown user role.");
+    }
+
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).send("Server error during login.");
+  }
+});
 
 // Route for signup page
 
@@ -160,6 +211,64 @@ app.get('/', (req, res) => {
     // res.redirect('/welcome');
     res.redirect('/splash');
 });
+
+function isAdmin(req, res, next) {
+  if (req.session && req.session.user && req.session.user.role === 'admin') {
+    return next();
+  } else {
+    res.status(403).send('Forbidden');
+  }
+}
+
+
+app.get("/admin", (req, res) => {
+  if (req.session.user && req.session.user.role === "admin") {
+    res.sendFile(__dirname + "admin.html");
+  } else {
+    res.redirect("/");
+  }
+});
+
+// Get all users
+app.get('/admin/users', isAdmin, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, username, email, role, gender, profile_picture FROM users');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
+
+// Delete a user
+app.delete('/admin/users/:id', isAdmin, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM users WHERE id = $1', [req.params.id]);
+    res.sendStatus(204);
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+});
+
+// Update user details (role, name, email)
+app.put("/admin/users/:id", async (req, res) => {
+  const userId = req.params.id;
+  const { username, email, role } = req.body;
+
+  try {
+    await pool.query(
+      // "UPDATE users SET username = $1, email = $2, role = $3 WHERE id = $4",
+      // [username, email, role, userId]
+      "UPDATE users SET role = $3 WHERE id = $1",
+      [username, email, role, userId]
+    );
+    res.status(200).send("User updated");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating user");
+  }
+});
+
+
 
 app.get("/getUserData", async (req, res) => {
     const { device_ip } = req.query;
@@ -209,30 +318,6 @@ app.get("/getUserData", async (req, res) => {
     res.redirect('/login');
   });
   
-
-
-// app.post("/signup", async (req, res) => {
-//     console.log('Inserted into pending_users (or nodemcu_table) for:', /* email or temperature, humidity */);
-//     // console.log('>>> SIGNUP BODY:', req.body);
-//     console.log('>>> req.body =', req.body);
-//     const { email, username, phone, gender, password } = req.body;
-//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  
-//     await pool.query(`
-//       INSERT INTO pending_users (email, username, phone, gender, password, otp)
-//       VALUES ($1, $2, $3, $4, $5, $6)
-//       ON CONFLICT (email) DO UPDATE SET otp = $6, created_at = CURRENT_TIMESTAMP
-//     `, [email, username, phone, gender, password, otp]);
-
-  
-//     await transporter.sendMail({
-//       to: email,
-//       subject: "Your OTP Code",
-//       text: `Your OTP is: ${otp}`,
-//     });
-  
-//     res.sendStatus(200);
-//   });
   
   app.post("/signup", upload.single("profile_picture"), async (req, res) => {
     
@@ -244,13 +329,14 @@ app.get("/getUserData", async (req, res) => {
     //this code below that will store the file in the cloudinary to the database
     const profile_picture = req.file ? req.file.path : null;
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const role = "user"; // Default role for new users
     console.log("📷 Filename to save in DB:", profile_picture);
     
     await pool.query(`
-      INSERT INTO pending_users (email, username, phone, gender, password, otp, profile_picture)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      INSERT INTO pending_users (email, username, phone, gender, password, otp, profile_picture, role)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       ON CONFLICT (email) DO UPDATE SET otp = $6, created_at = CURRENT_TIMESTAMP
-    `, [email, username, phone, gender, password, otp, profile_picture]);
+    `, [email, username, phone, gender, password, otp, profile_picture, role]);
   
     await transporter.sendMail({
       to: email,
@@ -273,8 +359,8 @@ app.post("/verify-otp", async (req, res) => {
     //   [user.email, user.username, user.phone, user.gender, user.password]);
   
     await pool.query(
-      "INSERT INTO users (email, username, phone, gender, password, profile_picture) VALUES ($1, $2, $3, $4, $5, $6)", 
-      [user.email, user.username, user.phone, user.gender, user.password, user.profile_picture]
+      "INSERT INTO users (email, username, phone, gender, password, profile_picture, role) VALUES ($1, $2, $3, $4, $5, $6, $7)", 
+      [user.email, user.username, user.phone, user.gender, user.password, user.profile_picture, user.role]
     );    
     
     await pool.query("DELETE FROM pending_users WHERE email = $1", [email]);
