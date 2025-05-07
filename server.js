@@ -150,7 +150,7 @@ app.post("/login", async (req, res) => {
         email,
         role: "admin",
       };
-      return res.redirect("/admin.html");
+      return res.redirect("/Admin/admin.html");
     }
 
     // Query database for user
@@ -171,7 +171,7 @@ app.post("/login", async (req, res) => {
 
     // Redirect based on role
     if (user.role === "admin") {
-      return res.redirect("/admin.html");
+      return res.redirect("/Admin/admin.html");
     } else if (user.role === "user") {
       return res.redirect("/dashboard");
     } else {
@@ -223,7 +223,7 @@ function isAdmin(req, res, next) {
 
 app.get("/admin", (req, res) => {
   if (req.session.user && req.session.user.role === "admin") {
-    res.sendFile(__dirname + "admin.html");
+    res.sendFile(__dirname + "Admin/admin.html");
   } else {
     res.redirect("/");
   }
