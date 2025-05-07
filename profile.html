@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>User Profile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="calicare logo.png" type="image/x-icon" />
+  <link rel="icon" href="/Images/calicare logo.png" type="image/x-icon" />
   <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
@@ -125,10 +125,18 @@
       background-color: #024c12 ;
       border-radius: 100%;
     }
+    .mask{
+        position: fixed;    
+        top: 0;
+        left: 0;
+        z-index: -1;
+        width: 100px;
+        height:150px;
+    }
   </style>
 </head>
 <body id="body" class="body2">
-  
+  <img class="mask" src="Images/mask.png" alt="">
   <div class="profile-card">
     <div class="edit">
       <h3 data-i18n="profile">Profile</h3>
@@ -185,7 +193,7 @@
             <!-- <span  class="toggle-password">
               <i class="fa fa-gears"></i>
             </span> -->
-            <a style="cursor: pointer;" href="setting2.html"><button style="width: fit-content; height: fit-content; border: none;"><img style="width: 30px; height: 30px; cursor: pointer;"  src="gear.png" alt=""></button></a>
+            <a style="cursor: pointer;" href="setting2.html"><button style="width: fit-content; height: fit-content; border: none;"><img style="width: 30px; height: 30px; cursor: pointer;"  src="/Images/gear.png" alt=""></button></a>
           </div>
         </p>
       </div>

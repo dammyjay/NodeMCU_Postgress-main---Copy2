@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Settings</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="calicare logo.png" type="image/x-icon" />
+  <link rel="icon" href="/Images/calicare logo.png" type="image/x-icon" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
   <style>
     body {
@@ -241,7 +241,7 @@
 <body>
   <div class="settings-card">
     <div class="top1">
-        <img id="goBack" src="Back.png" alt="logo" width="20" height="20"  style="cursor:pointer;"/>
+        <img id="goBack" src="/Images/Back.png" alt="logo" width="20" height="20"  style="cursor:pointer;"/>
         <h2>Settings</h2>
     </div>
     
@@ -249,13 +249,13 @@
     <div class="setting-item2">
       <!-- <span class="setting-label">Device Status</span> -->
       
-      <img id="deviceStatus" class="device-status" src="offline.png" alt="status"/>
+      <img id="deviceStatus" class="device-status" src="/Images/offline.png" alt="status"/>
       <p id="node-status" class="node-status"></p>
     </div>
 
     <div class="setting-item">
         <div class="icon-label">
-            <img src="bell.png" alt="" width="20" height="20">
+            <img src="/Images/bell.png" alt="" width="20" height="20">
             <div class="setting-label-group">
                 <p class="setting-label">In-App Notifications</p>
                 <p class="setting-label2">Receive notifications</p>
@@ -270,7 +270,7 @@
     <div class="setting-item">
       <!-- <span class="setting-label">Reminder Alerts</span> -->
       <div class="icon-label">
-            <img src="reminder.png" alt="" width="20" height="20">
+            <img src="/Images/reminder.png" alt="" width="20" height="20">
             <div class="setting-label-group">
                 <p class="setting-label">Reminder Alerts</p>
                 <p class="setting-label2">Set reminders</p>
@@ -284,7 +284,7 @@
 
     <div class="setting-item">
       <div class="icon-label">
-            <img src="Darkmode.png" alt="" width="20" height="20">
+            <img src="/Images/Darkmode.png" alt="" width="20" height="20">
             <div class="setting-label-group">
                 <p class="setting-label">Dark Mode</p>
                 <p class="setting-label2">Set the Visuals of the App</p>
@@ -299,7 +299,7 @@
     <div class="setting-item">
       <!-- <span class="setting-label">Language</span> -->
       <div class="icon-label">
-            <img src="language.png" alt="" width="20" height="20">
+            <img src="/Images/language.png" alt="" width="20" height="20">
             <div class="setting-label-group">
                 <p class="setting-label">Language</p>
                 <p class="setting-label2">Set your prefferd language</p>
@@ -317,7 +317,7 @@
 
     <div class="setting-item">
       <div class="icon-label">
-            <img src="connect.png" alt="" width="20" height="20">
+            <img src="/Images/connect.png" alt="" width="20" height="20">
             <div class="setting-label-group">
                 <p class="setting-label">Device Connection</p>
                 <p class="setting-label2">Set your preffered language</p>
@@ -328,7 +328,7 @@
 
      <div class="setting-item">
       <div class="icon-label">
-            <img src="export.png" alt=""  width="20" height="20">
+            <img src="/Images/export.png" alt=""  width="20" height="20">
             <div class="setting-label-group">
                 <p class="setting-label">Export Data</p>
                 <p class="setting-label2">Share you data</p>
@@ -340,7 +340,7 @@
 
     <div class="setting-item">
       <div class="icon-label">
-            <img src="export.png" alt="" width="20" height="20">
+            <img src="/Images/export.png" alt="" width="20" height="20">
             <div class="setting-label-group">
                 <p class="setting-label">About Calicare</p>
                 <p class="setting-label2">Learn more about us</p>
@@ -370,12 +370,12 @@
         .then(res => res.json())
         .then(data => {
           const statusImg = document.getElementById("deviceStatus");
-          statusImg.src = data.online ? "online.png" : "offline.png";
+          statusImg.src = data.online ? "online.png" : "/Images/offline.png";
         //   document.getElementById("deviceStatus");innerText = data.online ? "Online" : "Offline";
           document.getElementById("node-status").innerText = data.online ? "Online" : "Offline";
         })
         .catch(() => {
-          document.getElementById("deviceStatus").src = "offline.png";
+          document.getElementById("deviceStatus").src = "/Images/offline.png";
             document.getElementById("node-status").innerText = "offline";
         });
     }

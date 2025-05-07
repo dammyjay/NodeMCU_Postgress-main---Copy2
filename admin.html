@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Calicare Admin Dashboard</title>
   <link rel="stylesheet" href="/main.css" />
+  <link rel="icon" href="/Images/calicare logo.png" type="image/x-icon" />
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -207,7 +208,7 @@
       const tbody = document.querySelector('#users-table tbody');
       tbody.innerHTML = '';
       users.forEach(user => {
-        const profilePic = user.profile_picture ? user.profile_picture : 'profile.webp';
+        const profilePic = user.profile_picture ? user.profile_picture : '/Images/profile.webp';
         tbody.innerHTML += `
           <tr>
             <td>${user.id}</td>
