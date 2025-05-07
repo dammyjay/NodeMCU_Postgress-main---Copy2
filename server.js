@@ -250,16 +250,16 @@ app.delete('/admin/users/:id', isAdmin, async (req, res) => {
 });
 
 // Update user details (role, name, email)
-app.put("/admin/users/:id", async (req, res) => {
+app.put("/admin/users/:id", isAdmin, async (req, res) => {
   const userId = req.params.id;
   const { username, email, role } = req.body;
 
   try {
     await pool.query(
-      // "UPDATE users SET username = $1, email = $2, role = $3 WHERE id = $4",
-      // [username, email, role, userId]
-      "UPDATE users SET role = $3 WHERE id = $1",
+      "UPDATE users SET username = $1, email = $2, role = $3 WHERE id = $4",
       [username, email, role, userId]
+      // "UPDATE users SET role = $3 WHERE id = $1", 
+      // [username, email, role, userId]
     );
     res.status(200).send("User updated");
   } catch (err) {
