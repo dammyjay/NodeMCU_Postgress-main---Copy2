@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .live-readings {
+            display: flex;
+            flex-direction: column;
+            /* align-items: center; */
+            justify-content: center;
+            margin-top: 30px;
+            background: #e9fdf4;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .live-readings .details {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: space-between;
+        }
+        .live-readings h3 {
+            font-size: 24px;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+        .live-readings h3 {
+        color: #024c12;
+        margin-bottom: 15px;
+        }
+        .live-readings p {
+        font-size: 16px;
+        margin: 8px 0;
+        font-weight: bold;
+        }
+        button {
+        margin-top: 20px;
+        background: #28a745;
+        color: white;
+        padding: 12px 18px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        }
+        button:hover {
+        background-color: #218838;
+        }
+        .connectbtn{
+            display: flex;
+            width: 100;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .connectbtn button{
+            background-color: aqua;
+            color:black;
+            font-weight: bold;
+            padding: 10px 15px;
+        }
+    </style>
+
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+<body>
+    <div class="live-readings">
+        <!-- <img src="/Images/calicare logo.png" alt="Logo" style="width: 50px; height: 50px; border-radius: 50%; margin-bottom: 10px;"> -->
+        <h3>📡 Live Readings</h3>
+        <p>👤 Username: <span id="userName">--</span></p>
+        <p>📧 Email: <span id="userEmailDisplay">--</span></p>
+
+        <div class="details">
+            <p>🌡️ EMG Reading: <span id="liveTemp">--</span> %</p>
+            <!-- <p>💧 Humidity: <span id="liveHum">--</span> %</p> -->
+            <p>🆔 Device ID: <span id="liveDeviceId">--</span></p>
+        </div>
+        <div class="connectbtn">
+            <p id="node-status"></p>
+             <button id="device-stat" class="btn-export" onclick="connectToDevice()">Connect</button>
+            <!-- <button id="device-stat" class="btn-export" onclick="connectToESP32()">Connect Device</button> -->
+        </div>
+    </div>
+
+
+    <button onclick="downloadCSV()">📄 Export Data</button>
+    <!-- <button onclick="exportPDF()">🧾 Export PDF</button> -->
+    <button onclick="downloadPDF()">🧾 Export PDF</button>
+
+
+    <table id="dataTable" class="table table-striped table-bordered" style="width:100%; margin-top: 20px; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <thead>
+            <tr><th>Device ID</th><th>EMG Value</th><th>Date</th><th>Time</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        let userEmail = null;
+
+        fetch("/getProfile")
+        .then(res => res.json())
+        .then(user => {
+            userEmail = user.email;
+            userName = user.username;
+            profilPicUrl = user.profile_picture;
+            document.getElementById("userName").textContent = user.username;
+            document.getElementById("userEmailDisplay").textContent = user.email;
+            loadUserData();
+            pollLiveData();
+        })
+        .catch(() => alert("Failed to load user email"));
+
+        function loadUserData() {
+        fetch(`/getUserDeviceData?email=${encodeURIComponent(userEmail)}`)
+            .then(res => res.json())
+            .then(data => {
+                const tableBody = document.querySelector("#dataTable tbody");
+                tableBody.innerHTML = "";
+                data.forEach(row => {
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${row.device_id}</td>
+                            <td>${row.temperature}</td>
+                            <td>${row.date.slice(0, 10)}</td>
+                            <td>${row.time}</td>
+                        </tr>
+                    `;
+                });
+            });
+        }
+
+        setTimeout(loadUserData, 2000); // Wait for userEmail to load
+
+        function pollLiveData() {
+            fetch(`/getUserDeviceData?email=${encodeURIComponent(userEmail)}`)
+                .then(res => res.json())
+                .then(data => {
+                if (data.length > 0) {
+                    const latest = data[0];
+                    document.getElementById("liveTemp").textContent = latest.temperature;
+                    // document.getElementById("liveHum").textContent = latest.humidity;
+                    document.getElementById("liveDeviceId").textContent = latest.device_id;
+                }
+                });
+            }
+
+            // Refresh every 5 seconds
+        setInterval(pollLiveData, 5000);
+
+        async function connectToDevice() {
+            try {
+            const device = await navigator.bluetooth.requestDevice({
+                acceptAllDevices: true,
+                optionalServices: ['battery_service'] // Change to your NodeMCU service UUID if known
+            });
+
+            connectedDevice = device;
+            const server = await device.gatt.connect();
+
+            document.getElementById("node-status").textContent = `Connected to: ${device.name}`;
+            document.getElementById("device-stat").textContent = `Connected to: ${device.name}`;
+            // Optionally send email to device here (requires writable characteristic)
+
+            } catch (error) {
+            console.error("Bluetooth connection failed:", error);
+            alert("Bluetooth connection failed");
+            }
+        }
+
+        // 🟦 CONNECT TO ESP32 VIA BLE AND SEND EMAIL
+        async function connectToESP32() {
+        try {
+            const serviceUUID = "12345678-1234-1234-1234-1234567890ab";
+            const characteristicUUID = "abcd1234-abcd-1234-abcd-1234567890ab";
+
+            const device = await navigator.bluetooth.requestDevice({
+            filters: [{ namePrefix: "ESP32" }],
+            optionalServices: [serviceUUID]
+            });
+
+            const server = await device.gatt.connect();
+            const service = await server.getPrimaryService(serviceUUID);
+            bleCharacteristic = await service.getCharacteristic(characteristicUUID);
+
+            const encoder = new TextEncoder();
+            await bleCharacteristic.writeValue(encoder.encode(userEmail));
+
+            alert("✅ Connected and sent email to ESP32!");
+            console.log("📧 Sent email to ESP32:", userEmail);
+            document.getElementById("node-status").textContent = `Connected to: ${device.name}`;
+            document.getElementById("device-stat").textContent = `Connected to: ${device.name}`;
+        } 
+        
+        catch (err) {
+            console.error("❌ BLE connection failed:", err);
+            alert("Failed to connect to ESP32 via Bluetooth.");
+        }
+        }
+
+        function downloadCSV() {
+            fetch(`/getUserDeviceData?email=${encodeURIComponent(userEmail)}`)
+                .then(res => res.json())
+                .then(data => {
+                    const header = `Username: ${userName}\n`;
+                    const header2 = `Email: ${userEmail}\n\n`;
+                    const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+                    const fileName = `${userName}_Calicare_EMG_Readings_${timestamp}.csv`;
+                    const csvHeader = "Device ID,EMG Readings,Date,Time\n";
+                    const csvRows = data.map(row => `${row.device_id},${row.temperature},${row.date.slice(0, 10)},${row.time}`);
+                    const csvContent =header + header2 + csvHeader + csvRows.join("\n");
+
+                    const blob = new Blob([csvContent], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+
+                    const a = document.createElement("a");
+                    a.setAttribute("hidden", "");
+                    a.setAttribute("href", url);
+                    a.setAttribute("download", `${userName}_Calicare_EMG_Readings_${timestamp}.csv`);
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                });
+        }
+
+
+        async function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const profileRes = await fetch("/getProfile");
+            const user = await profileRes.json();
+            const dataRes = await fetch(`/getUserDeviceData?email=${encodeURIComponent(user.email)}`);
+            const data = await dataRes.json();
+
+            const userName = user.username;
+            const userEmail = user.email;
+            const profilePicUrl = user.profile_picture;
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+
+            let y = 10;
+
+                // === ✅ Company Logo ===
+            try {
+                const logoBlob = await fetch("/Images/calicare logo.png").then(res => res.blob()); // adjust path if needed
+                const logoBase64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(logoBlob);
+                });
+                doc.addImage(logoBase64, "PNG", 10, 10, 20, 20); // x, y, width, height
+            } catch (e) {
+                console.warn("Logo not found");
+            }
+
+            // === ✅ Company Name ===
+            doc.setFontSize(18);
+            doc.setFont("helvetica", "bold"); // Set to bold
+            doc.setTextColor(40, 167, 69); // Calicare green
+            doc.text("Calicare Health System", 40, 20);
+
+            y = 40;
+
+            // Add profile picture if available
+            if (profilePicUrl) {
+                try {
+                    const imgBlob = await fetch(profilePicUrl).then(res => res.blob());
+                    const imgBase64 = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(reader.result);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(imgBlob);
+                    });
+
+                    // Simulate a round mask by drawing a white circle first
+                    doc.setFillColor(255, 255, 255);
+                    doc.circle(170, y + 20, 20, 'F'); // centerX, centerY, radius, 'F' = fill
+
+                    // Then draw the image centered inside the circle
+                    doc.addImage(imgBase64, "JPEG", 150, y, 30, 35); // x, y, width, height
+
+                    // doc.addImage(imgBase64, "JPEG", 150, y, 40, 40); // x, y, width, height
+                } catch (err) {
+                    console.warn("⚠️ Failed to load profile image:", err);
+                }
+            }
+
+            // Add text details
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "bold"); // Set to bold
+            doc.text(`Username: ${userName}`, 10, y + 10);
+            doc.text(`Email: ${userEmail}`, 10, y + 20);
+            doc.text("EMG Readings:", 10, y + 35);
+
+            // === ✅ Watermark ===
+            doc.setFontSize(75);
+            doc.setTextColor(230, 230, 230);
+            doc.text("CALICARE", 50, 180, { angle: 45 });
+
+            // Add table headers
+            const headers = ["Device ID", "EMG Value (%)", "Date", "Time"];
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "bold"); // Set to bold
+            doc.setTextColor(0, 0, 0);
+            headers.forEach((header, i) => {
+                doc.text(header, 10 + i * 46, y + 48);
+            });
+
+            
+
+            // Add user data in the Table
+            // doc.setFontSize(10);
+            // doc.setFont("helvetica", "normal"); // Set to bold
+            // data.forEach((row, index) => {
+            //     const lineY = y + 55 + index * 10;
+            //     doc.text(row.device_id.toString(), 10, lineY);
+            //     doc.text(row.temperature.toString(), 45, lineY);
+            //     doc.text(row.humidity.toString(), 80, lineY);
+            //     doc.text(row.date.slice(0, 10), 115, lineY);
+            //     doc.text(row.time, 150, lineY);
+            // });
+
+            // Draw border under header
+            doc.setDrawColor(0);
+            doc.line(10, y + 52, 200, y + 52);
+
+            // Reset font for table rows
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10);
+
+            // Loop through data and draw rows
+            data.forEach((row, index) => {
+                const rowY = y + 60 + index * 10;
+
+                // Alternate background color
+                if (index % 2 === 0) {
+                    doc.setFillColor(240, 240, 240); // light gray
+                    doc.rect(10, rowY - 7, 190, 10, 'F'); // filled rectangle
+                }
+
+                // Add text data space 46 for 4 columns
+                doc.text(row.device_id.toString(), 10, rowY);
+                doc.text(row.temperature.toString(), 56, rowY);
+                // doc.text(row.humidity.toString(), 80, rowY);
+                doc.text(row.date.slice(0, 10), 102, rowY);
+                doc.text(row.time, 150, rowY);
+            });
+
+
+            // Save PDF
+            const fileName = `${userName}_Calicare_EMG_Readings_${timestamp}.pdf`;
+            doc.save(fileName);
+        }
+
+
+    </script>
+
+</body>
+</html>

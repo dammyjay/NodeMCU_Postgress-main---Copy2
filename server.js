@@ -268,6 +268,14 @@ app.put("/admin/users/:id", isAdmin, async (req, res) => {
   }
 });
 
+app.get("/getUserDeviceData", async (req, res) => {
+  const { email } = req.query;
+  const result = await pool.query(
+    "SELECT * FROM nodemcu2_data WHERE email = $1 ORDER BY date DESC, time DESC",
+    [email]
+  );
+  res.json(result.rows);
+});
 
 
 app.get("/getUserData", async (req, res) => {
@@ -631,6 +639,27 @@ app.post("/postData", express.urlencoded({ extended: true }), async (req, res) =
   res.send('Data received');
 
 });
+
+app.post("/postData2", express.urlencoded({ extended: true }), async (req, res) => {
+  const { temperature, humidity, email, device_id } = req.body;
+  const date = new Date().toISOString().split("T")[0];
+  const time = new Date().toISOString().split("T")[1].split(".")[0];
+
+  try {
+    const result = await pool.query(
+      `INSERT INTO nodemcu2_data (temperature, humidity, date, time, email, device_id)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [temperature, humidity, date, time, email, device_id]
+    );
+
+    nodeMCULastSeen = new Date();
+    res.json({ message: "Data inserted successfully", data: result.rows[0] });
+  } catch (err) {
+    console.error("Error inserting data:", err);
+    res.status(500).json({ error: "Database insertion failed" });
+  }
+});
+
 
 // app.get('/nodemcu-status', (req, res) => {
 //     if (!nodeMCULastSeen) {

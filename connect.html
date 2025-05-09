@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+  <h2>Settings</h2>
+  <p>Logged in as: <span id="userEmail">Loading...</span></p>
+
+  <button onclick="connectToDevice()">Connect to NodeMCU</button>
+  <p id="deviceStatus">No device connected</p>
+  <script>
+    let userEmail = '';
+    let connectedDevice = null;
+
+    // Fetch logged-in user's email
+        fetch("/getProfile")
+            .then(res => res.json())
+            .then(user => {
+            userEmail = user.email;
+            document.getElementById("userEmail").textContent = userEmail;
+            });
+
+        // Connect to NodeMCU via Bluetooth
+        async function connectToDevice() {
+            try {
+            const device = await navigator.bluetooth.requestDevice({
+                acceptAllDevices: true,
+                optionalServices: ['battery_service'] // Change to your NodeMCU service UUID if known
+            });
+
+            connectedDevice = device;
+            const server = await device.gatt.connect();
+
+            document.getElementById("deviceStatus").textContent = `Connected to: ${device.name}`;
+            
+            // Optionally send email to device here (requires writable characteristic)
+
+            } catch (error) {
+            console.error("Bluetooth connection failed:", error);
+            alert("Bluetooth connection failed");
+            }
+        }
+    </script>
+</body>
+
+
+
+</html>
+
+
+
