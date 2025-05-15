@@ -133,7 +133,7 @@
     }
     .sidebar {
       width: fit-content;
-      background: rgb(47, 224, 255);
+      background: #A2F9FC;
       color: rgb(0, 0, 0);
       height: 100vh;
       position: fixed;
@@ -162,6 +162,12 @@
       color: rgb(0, 0, 0);
       text-decoration: none;
     }
+
+    .active {
+        background-color: #05845e;
+        color: white;
+        padding: 10px 5px;
+      }
 
     .main {
       margin-left: 200px;
@@ -247,6 +253,8 @@
       }
 
       button {
+        background-color: #24D0D6;
+        color: white;
         padding: 4px 8px;
         font-size: 12px;
       }
@@ -308,7 +316,7 @@
                 <li><a href="/Admin/device-admin.html">Devices</a></li>
                 <li><a href="/Admin/upload.html">Upload</a></li>
                 <li><a href="/Admin/setting-admin.html">Settings</a></li>
-                <li><a href="/Admin/profile-admin.html">Profile</a></li>
+                <li class="active"><a href="/Admin/profile-admin.html">Profile</a></li>
                 <li><a href="/logout">Logout</a></li>
             </ul>
         </div>
