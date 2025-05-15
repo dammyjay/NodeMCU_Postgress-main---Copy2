@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,5 +10,124 @@
            <img style="width: 40px; height: 40px;" src="calicare logo.png" alt="Site Logo" id="logo"> 
     </a>
     <h1>Welcome to exercise page</h1>
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Exercise Tutorials</title>
+  <link rel="icon" href="Images/calicare logo.png" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"/>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ebfafb;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      color: #024c12;
+      margin-bottom: 30px;
+    }
+
+    .exercise-card {
+      display: flex;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      margin-bottom: 25px;
+      transition: transform 0.3s ease;
+    }
+
+    .exercise-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .video-container {
+      flex: 1;
+      min-width: 200px;
+      max-width: 300px;
+    }
+
+    .video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-right: 2px solid #e0e0e0;
+    }
+
+    .exercise-info {
+      flex: 2;
+      padding: 20px;
+    }
+
+    .exercise-info h3 {
+      color: #024c12;
+      margin-top: 0;
+    }
+
+    .exercise-info p {
+      font-size: 14px;
+      color: #333;
+      margin: 10px 0;
+    }
+
+    .author {
+      font-weight: bold;
+      color: #1270b0;
+      font-size: 13px;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .exercise-card {
+        flex-direction: column;
+      }
+
+      .video-container {
+        max-width: 100%;
+        border-right: none;
+        border-bottom: 2px solid #e0e0e0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h2 class="header">🎥 Exercise Tutorials</h2>
+
+  <div class="exercise-card">
+    <div class="video-container">
+      <video src="https://youtu.be/Dq-Fj-vFfYE" controls poster="Images/backneck.png"></video>
+    </div>
+    <div class="exercise-info">
+      <h3>Neck Rotation Exercise</h3>
+      <p>Follow this video tutorial to learn the proper technique for neck rotation exercises to relieve tension and improve flexibility.</p>
+      <p class="author">👩‍⚕️ Physiotherapist Sarah</p>
+    </div>
+  </div>
+
+  <div class="exercise-card">
+    <div class="video-container">
+      <video src="videos/shoulder_roll.mp4" controls poster="Images/shoulder-thumb.png"></video>
+    </div>
+    <div class="exercise-info">
+      <h3>Shoulder Roll Exercise</h3>
+      <p>Learn how to do shoulder rolls correctly to improve shoulder mobility, ease tightness, and enhance upper body posture.</p>
+      <p class="author">👨‍⚕️ Physiotherapist John</p>
+    </div>
+  </div>
+
+  <!-- Add more exercise cards below as needed -->
+
 </body>
 </html>

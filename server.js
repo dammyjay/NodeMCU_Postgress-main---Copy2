@@ -33,6 +33,17 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
+// Storage for poster images
+const exerciseStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'exercise_posters',
+    allowed_formats: ['jpg', 'png'],
+    transformation: [{ width: 300, height: 300, crop: 'limit' }]
+  },
+});
+const exerciseUpload = multer({ storage: exerciseStorage });
+
 
 const connectionString = process.env.DATABASE_URL;
 const passwordResetTokens = new Map(); // In-memory store for demo. Use DB for production.
@@ -727,6 +738,55 @@ app.get("/getDataByDate", async (req, res) => {
         res.status(500).json({ error: "Database filter failed" });
     }
 });
+
+// Database Table: exercises (id, title, video_url, description, instructor)
+
+app.get('/admin/exercises', async (req, res) => {
+  const result = await pool.query('SELECT * FROM exercises ORDER BY id DESC');
+  res.json(result.rows);
+});
+
+app.post('/admin/exercises', async (req, res) => {
+  const { title, video_url, description, instructor, poster_image, category} = req.body;
+  await pool.query(
+    'INSERT INTO exercises (title, video_url, description, instructor, poster_image, category) VALUES ($1, $2, $3, $4, $6, $7)',
+    [title, video_url, description, instructor, poster_image, category]
+  );
+  res.sendStatus(200);
+});
+
+app.put('/admin/exercises/:id', async (req, res) => {
+  const { title, video_url, description, instructor, poster_image, category } = req.body;
+  await pool.query(
+    'UPDATE exercises SET title = $1, video_url = $2, description = $3, instructor = $4, poster_image =$6, category =$7 WHERE id = $5',
+    [title, video_url, description, instructor, poster_image, category, req.params.id]
+  );
+  res.sendStatus(200);
+});
+
+app.delete('/admin/exercises/:id', async (req, res) => {
+  await pool.query('DELETE FROM exercises WHERE id = $1', [req.params.id]);
+  res.sendStatus(200);
+});
+
+
+app.post("/admin/add-exercise", exerciseUpload.single("poster_image"), async (req, res) => {
+  const { title, description, instructor, video_url, category } = req.body;
+  const poster_image = req.file ? req.file.path : null;
+
+  try {
+    await pool.query(`
+      INSERT INTO exercises (title, description, instructor, video_url, poster_image, category)
+      VALUES ($1, $2, $3, $4, $5, $6)
+    `, [title, description, instructor, video_url, poster_image, category]);
+
+    res.send("Exercise added successfully.");
+  } catch (err) {
+    console.error("❌ Error adding exercise:", err);
+    res.status(500).send("Error saving exercise.");
+  }
+});
+
 
 
 const PORT = process.env.PORT || 3000;

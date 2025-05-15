@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Exercise Tutorials</title>
+  <link rel="icon" href="Images/calicare logo.png" type="image/x-icon" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"/>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ebfafb;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      color: #024c12;
+      margin-bottom: 30px;
+    }
+
+    .exercise-card {
+      display: flex;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      margin-bottom: 25px;
+      transition: transform 0.3s ease;
+    }
+
+    .exercise-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .video-container {
+      flex: 1;
+      min-width: 200px;
+      max-width: 300px;
+    }
+
+    .video-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-right: 2px solid #e0e0e0;
+    }
+
+    .exercise-info {
+      flex: 2;
+      padding: 20px;
+    }
+
+    .exercise-info h3 {
+      color: #024c12;
+      margin-top: 0;
+    }
+
+    .exercise-info p {
+      font-size: 14px;
+      color: #333;
+      margin: 10px 0;
+    }
+
+    .author {
+      font-weight: bold;
+      color: #1270b0;
+      font-size: 13px;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .exercise-card {
+        flex-direction: column;
+      }
+
+      .video-container {
+        max-width: 100%;
+        border-right: none;
+        border-bottom: 2px solid #e0e0e0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="index2.html">
+    <img style="width: 40px; height: 40px;" src="Images/calicare logo.png" alt="Site Logo" />
+  </a>
+
+  <h2 class="header">🎥 Exercise Tutorials</h2>
+
+  <div style="margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 10px;">
+    <input id="searchInput" type="text" placeholder="Search exercises..." style="padding: 10px; width: 60%;">
+    <select id="categoryFilter" style="padding: 10px;">
+      <option value="">All Categories</option>
+      <option value="Neck">Neck</option>
+      <option value="Shoulder">Shoulder</option>
+      <option value="Back">Back</option>
+      <option value="Legs">Legs</option>
+    </select>
+  </div>
+  
+
+  <div id="exercise-container"></div>
+
+  <script>
+    // async function loadExercises() {
+    //   const container = document.getElementById("exercise-container");
+    //   try {
+    //     const res = await fetch("/admin/exercises");
+    //     const exercises = await res.json();
+
+    //     exercises.forEach(ex => {
+    //       const card = document.createElement("div");
+    //       card.className = "exercise-card";
+
+    //       // YouTube embed or direct video
+    //       let videoHTML = '';
+    //       if (ex.video_url.includes("youtube.com") || ex.video_url.includes("youtu.be")) {
+    //         const youtubeId = extractYouTubeID(ex.video_url);
+    //         videoHTML = `
+    //           <iframe width="100%" height="100%" 
+    //             src="https://www.youtube.com/embed/${youtubeId}" 
+    //             frameborder="0" 
+    //             allowfullscreen></iframe>`;
+    //       } else {
+    //         videoHTML = `<video src="${ex.video_url}" controls></video>`;
+    //       }
+
+    //       card.innerHTML = `
+    //         <div class="video-container">
+    //           ${videoHTML}
+    //         </div>
+    //         <div class="exercise-info">
+    //           <h3>${ex.title}</h3>
+    //           <p>${ex.description}</p>
+    //           <p class="author">👩‍⚕️ ${ex.instructor}</p>
+    //         </div>
+    //       `;
+
+    //       container.appendChild(card);
+    //     });
+
+    //   } catch (err) {
+    //     container.innerHTML = "<p style='color:red;'>Failed to load exercises. Please try again later.</p>";
+    //     console.error("Error loading exercises:", err);
+    //   }
+    // }
+
+
+         // Utility: Extracts YouTube video ID from any valid YouTube URL
+  function extractYouTubeID(url) {
+    const regex = /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^\s&?/]+)/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+  }
+
+  async function loadExercises() {
+    const container = document.getElementById("exercise-container");
+    try {
+      const res = await fetch("/admin/exercises");
+      const exercises = await res.json();
+
+      container.innerHTML = ""; // clear previous entries if any
+
+      exercises.forEach(ex => {
+        const card = document.createElement("div");
+        card.className = "exercise-card";
+
+        // ✅ Render YouTube or regular video
+        let videoHTML = '';
+        if (ex.video_url.includes("youtube.com") || ex.video_url.includes("youtu.be")) {
+          const youtubeId = extractYouTubeID(ex.video_url);
+          if (youtubeId) {
+            videoHTML = `
+              <iframe width="100%" height="100%"
+                src="https://www.youtube.com/embed/${youtubeId}"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+              </iframe>`;
+          } else {
+            videoHTML = `<p style="color: red;">Invalid YouTube link.</p>`;
+          }
+        } else {
+          videoHTML = `<video src="${ex.video_url}" controls></video>`;
+        }
+
+        // ✅ Final HTML card
+        card.innerHTML = `
+          <div class="video-container">
+            ${videoHTML}
+          </div>
+          <div class="exercise-info">
+            <h3>${ex.title}</h3>
+            <p>${ex.description}</p>
+            <p class="author">👩‍⚕️ ${ex.instructor}</p>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+    } catch (err) {
+      container.innerHTML = "<p style='color:red;'>Failed to load exercises. Please try again later.</p>";
+      console.error("Error loading exercises:", err);
+    }
+  }
+
+  // Auto-load when the page is ready
+  document.addEventListener("DOMContentLoaded", loadExercises);
+
+    function loadExercises() {
+        const container = document.getElementById("exercise-container");
+        const query = document.getElementById("searchInput").value.toLowerCase();
+        const category = document.getElementById("categoryFilter").value;
+
+        fetch("/admin/exercises")
+            .then(res => res.json())
+            .then(exercises => {
+            container.innerHTML = "";
+            exercises
+                .filter(ex => 
+                (!category || ex.category === category) &&
+                (ex.title.toLowerCase().includes(query) || ex.description.toLowerCase().includes(query))
+                )
+                .forEach(ex => {
+                const card = document.createElement("div");
+                card.className = "exercise-card";
+                let videoHTML = '';
+
+                if (ex.video_url.includes("youtube.com") || ex.video_url.includes("youtu.be")) {
+                    const id = extractYouTubeID(ex.video_url);
+                    videoHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>`;
+                } else {
+                    videoHTML = `<video src="${ex.video_url}" controls poster="${ex.poster_image || ''}"></video>`;
+                }
+
+                card.innerHTML = `
+                    <div class="video-container">${videoHTML}</div>
+                    <div class="exercise-info">
+                    <h3>${ex.title}</h3>
+                    <p>${ex.description}</p>
+                    <p class="author">👨‍⚕️ ${ex.instructor}</p>
+                    </div>`;
+                container.appendChild(card);
+                });
+            });
+        }
+
+        document.getElementById("searchInput").addEventListener("input", loadExercises);
+        document.getElementById("categoryFilter").addEventListener("change", loadExercises);
+
+
+    function extractYouTubeID(url) {
+      // Handles both standard and short YouTube links
+      const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
+      const match = url.match(regex);
+      return match ? match[1] : '';
+    }
+
+    loadExercises();
+  </script>
+</body>
+</html>
