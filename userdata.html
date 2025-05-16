@@ -63,6 +63,31 @@
             font-weight: bold;
             padding: 10px 15px;
         }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin: 15px 0;
+            padding: 10px;
+            resize: none;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #bbb;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
     </style>
 
 </head>
@@ -85,11 +110,18 @@
         </div>
         <div class="connectbtn">
             <p id="node-status"></p>
-             <button id="device-stat" class="btn-export" onclick="connectToDevice()">Connect</button>
-            <!-- <button id="device-stat" class="btn-export" onclick="connectToESP32()">Connect Device</button> -->
+             <!-- <button id="device-stat" class="btn-export" onclick="connectToDevice()">Connect</button> -->
+            <button id="device-stat" class="btn-export" onclick="connectToESP32()">Connect Device</button>
         </div>
     </div>
 
+    <div class="container">
+        <h1>ESP32 BLE Messenger</h1>
+        <button id="connect">Connect to Neckguard</button>
+        <textarea id="log" readonly placeholder="ESP32 messages will appear here..."></textarea>
+        <input type="text" id="message" placeholder="Type a message..." />
+        <button id="send">Send</button>
+      </div>
 
     <button onclick="downloadCSV()">📄 Export Data</button>
     <!-- <button onclick="exportPDF()">🧾 Export PDF</button> -->
@@ -179,8 +211,8 @@
         // 🟦 CONNECT TO ESP32 VIA BLE AND SEND EMAIL
         async function connectToESP32() {
         try {
-            const serviceUUID = "12345678-1234-1234-1234-1234567890ab";
-            const characteristicUUID = "abcd1234-abcd-1234-abcd-1234567890ab";
+            const serviceUUID = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
+            const characteristicUUID = "beb5483e-36e1-4688-b7f5-ea07361b26a8";
 
             const device = await navigator.bluetooth.requestDevice({
             filters: [{ namePrefix: "ESP32" }],
@@ -361,6 +393,75 @@
             doc.save(fileName);
         }
 
+
+    </script>
+
+    <script>
+        let device;
+        let characteristic;
+
+        const SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
+        const CHARACTERISTIC_UUID = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
+
+        document.getElementById('connect').addEventListener('click', async () => {
+        try {
+            device = await navigator.bluetooth.requestDevice({
+            filters: [{ namePrefix: 'ESP32' }],
+            optionalServices: [SERVICE_UUID]
+            });
+
+            const server = await device.gatt.connect();
+            const service = await server.getPrimaryService(SERVICE_UUID);
+            characteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
+
+            log(`Connected to ${device.name}`);
+            readFromESP32();
+        } catch (error) {
+            log('Error: ' + error);
+        }
+        });
+
+        document.getElementById('send').addEventListener('click', async () => {
+        const msg = document.getElementById('message').value;
+        if (!msg || !characteristic) return;
+        const encoder = new TextEncoder();
+        await characteristic.writeValue(encoder.encode(msg));
+        log(`Sent to ESP32: ${msg}`);
+        document.getElementById('message').value = '';
+        });
+
+        function log(text) {
+        const logArea = document.getElementById('log');
+        logArea.value += text + '\n';
+        logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        // async function readFromESP32() {
+        //   try {
+        //     const value = await characteristic.readValue();
+        //     const decoder = new TextDecoder();
+        //     const received = decoder.decode(value);
+        //     log(`Received from ESP32: ${received}`);
+        //   } catch (err) {
+        //     log('Read failed: ' + err);
+        //   }
+        // }
+
+
+        async function readFromESP32() {
+        try {
+            await characteristic.startNotifications(); // 👈 Subscribe to notifications
+            characteristic.addEventListener('characteristicvaluechanged', (event) => {
+            const decoder = new TextDecoder();
+            const value = event.target.value;
+            const received = decoder.decode(value);
+            log(`ESP32 says: ${received}`);
+            });
+            log("Subscribed to ESP32 notifications.");
+        } catch (err) {
+            log('Notification error: ' + err);
+        }
+        }
 
     </script>
 
