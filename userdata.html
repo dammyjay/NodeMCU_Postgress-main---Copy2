@@ -450,20 +450,84 @@
         // }
 
 
+        // async function readFromESP32() {
+        // try {
+        //     await characteristic.startNotifications(); // 👈 Subscribe to notifications
+        //     characteristic.addEventListener('characteristicvaluechanged', (event) => {
+        //     const decoder = new TextDecoder();
+        //     const value = event.target.value;
+        //     const received = decoder.decode(value);
+        //     log(`NeckGuard says: ${received}`);
+        //     });
+        //     log("Subscribed to NeckGuard notifications.");
+        // } catch (err) {
+        //     log('Notification error: ' + err);
+        // }
+        // }
+
         async function readFromESP32() {
-        try {
-            await characteristic.startNotifications(); // 👈 Subscribe to notifications
-            characteristic.addEventListener('characteristicvaluechanged', (event) => {
-            const decoder = new TextDecoder();
-            const value = event.target.value;
-            const received = decoder.decode(value);
-            log(`NeckGuard says: ${received}`);
-            });
-            log("Subscribed to NeckGuard notifications.");
-        } catch (err) {
-            log('Notification error: ' + err);
-        }
-        }
+            try {
+                await characteristic.startNotifications(); // 👈 Subscribe to notifications
+                characteristic.addEventListener('characteristicvaluechanged', async (event) => {
+                const decoder = new TextDecoder();
+                const value = event.target.value;
+                const received = decoder.decode(value).trim();  // Example: "zucali2022@gmail.com , 25.95 , 44.05 , 24:6f:28:bb:f9:02"
+
+                log(`NeckGuard says: ${received}`);
+
+                const [email, temp, hum, deviceId] = received.split(',').map(s => s.trim());
+
+                // Optional UI update:
+                document.getElementById("liveTemp").textContent = temp;
+                document.getElementById("liveDeviceId").textContent = deviceId;
+
+                // Now send to cloud backend
+                await fetch("https://calicareapp.onrender.com/postData2", {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams({
+                    email,
+                    temperature: temp,
+                    humidity: hum,
+                    device_id: deviceId
+                    })
+                }).then(res => res.text())
+                    .then(result => console.log("✅ Sent to cloud:", result))
+                    .catch(err => console.error("❌ Error sending to cloud:", err));
+
+                // Append to table// ✅ NOW: Get date and time for the frontend table
+                const now = new Date();
+                const dateStr = now.toISOString().slice(0, 10);     // e.g., "2025-05-16"
+                const timeStr = now.toTimeString().slice(0, 8);      // e.g., "14:33:20"
+
+                // ✅ Append row to table without reload
+                appendRowToTable(deviceId, temp, dateStr, timeStr);
+
+                });
+
+                log("Subscribed to NeckGuard notifications.");
+            } catch (err) {
+                log('Notification error: ' + err);
+
+                await loadUserData(); // ✅ refresh table with new reading
+            }
+            }
+
+            function appendRowToTable(device_id, temperature, date, time) {
+                const tableBody = document.querySelector("#dataTable tbody");
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${device_id}</td>
+                    <td>${temperature}</td>
+                    <td>${date}</td>
+                    <td>${time}</td>
+                `;
+                tableBody.prepend(row); // add to top
+            }
+
+
 
     </script>
 

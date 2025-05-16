@@ -709,7 +709,8 @@ app.get('/nodemcu-status', (req, res) => {
 
 app.get("/getAllData", async (req, res) => {
     try {
-        const result = await pool.query("SELECT * FROM nodemcu_table ORDER BY id DESC");
+      // const result = await pool.query("SELECT * FROM nodemcu_table ORDER BY id DESC");
+      const result = await pool.query("SELECT * FROM nodemcu2_data ORDER BY id DESC");
         res.json(result.rows);
     } catch (error) {
         console.error("Error fetching data:", error);
