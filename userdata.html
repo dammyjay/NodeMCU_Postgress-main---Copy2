@@ -414,7 +414,9 @@
             const service = await server.getPrimaryService(SERVICE_UUID);
             characteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
 
-            log(`Connected to ${device.name}`);
+            const encoder = new TextEncoder();
+            await characteristic.writeValue(encoder.encode(userEmail));
+            log(`sent email to NeckGuard! and Connected to ${device.name}`);
             readFromESP32();
         } catch (error) {
             log('Error: ' + error);
@@ -426,7 +428,7 @@
         if (!msg || !characteristic) return;
         const encoder = new TextEncoder();
         await characteristic.writeValue(encoder.encode(msg));
-        log(`Sent to ESP32: ${msg}`);
+        log(`Sent to NeckGuard: ${msg}`);
         document.getElementById('message').value = '';
         });
 
@@ -455,9 +457,9 @@
             const decoder = new TextDecoder();
             const value = event.target.value;
             const received = decoder.decode(value);
-            log(`ESP32 says: ${received}`);
+            log(`NeckGuard says: ${received}`);
             });
-            log("Subscribed to ESP32 notifications.");
+            log("Subscribed to NeckGuard notifications.");
         } catch (err) {
             log('Notification error: ' + err);
         }
