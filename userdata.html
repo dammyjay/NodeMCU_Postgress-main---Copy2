@@ -110,8 +110,11 @@
         </div>
         <div class="connectbtn">
             <p id="node-status"></p>
+            <p id="neckguard-stat">Device Stat</p>
              <!-- <button id="device-stat" class="btn-export" onclick="connectToDevice()">Connect</button> -->
-            <button id="device-stat" class="btn-export" onclick="connectToESP32()">Connect Device</button>
+            <!-- <button id="device-stat" class="btn-export" onclick="connectToESP32()">Connect Device</button> -->
+            <button id="connect" class="btn-export">Connect Device</button>
+            
         </div>
     </div>
 
@@ -414,6 +417,12 @@
             const service = await server.getPrimaryService(SERVICE_UUID);
             characteristic = await service.getCharacteristic(CHARACTERISTIC_UUID);
 
+            device.addEventListener('gattserverdisconnected', () => {
+            document.getElementById("neckguard-stat").textContent = "Disconnected";
+            // document.getElementById("container").style.display = "none"; // hide UI
+            log("Device disconnected.");
+            });
+
             const encoder = new TextEncoder();
             await characteristic.writeValue(encoder.encode(userEmail));
             log(`sent email to NeckGuard! and Connected to ${device.name}`);
@@ -433,9 +442,15 @@
         });
 
         function log(text) {
-        const logArea = document.getElementById('log');
-        logArea.value += text + '\n';
-        logArea.scrollTop = logArea.scrollHeight;
+            
+            const logArea = document.getElementById('log');
+            logArea.value += text + '\n';
+            logArea.scrollTop = logArea.scrollHeight;
+
+            // Update connection status if it's a successful connection
+            if (text.includes('Connected to')) {
+                document.getElementById("neckguard-stat").textContent = text;
+            }
         }
 
         // async function readFromESP32() {
@@ -482,6 +497,7 @@
                 document.getElementById("liveDeviceId").textContent = deviceId;
 
                 // Now send to cloud backend
+                // await fetch("https://calicareapp.onrender.com/postData2", {
                 await fetch("https://calicareapp.onrender.com/postData2", {
                     method: "POST",
                     headers: {

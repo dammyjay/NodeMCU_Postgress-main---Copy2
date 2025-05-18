@@ -63,7 +63,8 @@ const pool = new Pool({
 
 
   app.use(cors({
-    origin: 'https://calicareapp.onrender.com', // Your frontend domain
+    // origin: 'https://calicareapp.onrender.com', // Your render frontend domain
+    origin: 'https://calicareapp.onrender.com', // Your railway frontend domain
     credentials: true                            // Allow cookies to be sent
   }));
 
